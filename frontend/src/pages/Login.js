@@ -6,22 +6,20 @@ import { connect } from "react-redux";
 
 // My imports
 import { login } from "../redux/actions/index";
+import LoginForm from '../components/LoginForm'
 
 const Login = props => {
+  const dummySubmit = (data) => {
+    console.log(data)
+    props.login({
+      name: "somename",
+      someotherthing: "willbegiventouserobject"
+    })
+  }
   return (
     <div>
       {props.isUser ? <Redirect to="/home" /> : null}
-      Login
-      <button
-        onClick={() =>
-          props.login({
-            name: "somename",
-            someotherthing: "willbegiventouserobject"
-          })
-        }
-      >
-        login
-      </button>
+      <LoginForm submit={dummySubmit}/>
     </div>
   );
 };
