@@ -7,10 +7,7 @@ import {
   makeStyles,
   InputAdornment,
   IconButton,
-  Typography,
-  Link,
   FormControl,
-  Card,
 } from '@material-ui/core'
 import { Visibility, VisibilityOff } from '@material-ui/icons'
 import * as yup from 'yup'
@@ -28,18 +25,12 @@ const LoginForm = ({ submit }) => {
   // STYLING
   const useStyles = makeStyles({
     form: {
-      width: '300px',
-      margin: '0 auto',
-      minHeight: '300px',
+      margin: '10px auto',
+      height: '250px',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'space-between',
-    },
-    card: {
-      width: '330px',
-      margin: '100px auto',
-      padding: '20px'
     }
   })
   const classes = useStyles()
@@ -48,7 +39,7 @@ const LoginForm = ({ submit }) => {
   const [showPassword, handleShowPassword] = React.useState(false)
 
   return (
-    <Card className={classes.card}>
+    <>
       <Formik
         initialValues={{ username: '', password: '' }}
         onSubmit={async (data, { setSubmitting }) => {
@@ -115,14 +106,11 @@ const LoginForm = ({ submit }) => {
                 Login
               </Button>
             </FormControl>
-            <Typography>
-              or <Link href='#'>Register</Link>
-            </Typography>
             {/* <pre>{JSON.stringify(values, null, 2)}</pre> */}
           </Form>
         )}
       </Formik>
-    </Card>
+    </>
   )
 }
 

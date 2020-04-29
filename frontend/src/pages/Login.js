@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 
 // My imports
 import { login } from "../redux/actions/index";
-import LoginForm from '../components/LoginForm'
+import TabPanel from '../components/TabPanel'
 
 const Login = props => {
   const dummySubmit = (data) => {
@@ -19,7 +19,7 @@ const Login = props => {
   return (
     <div>
       {props.isUser ? <Redirect to="/home" /> : null}
-      <LoginForm submit={dummySubmit}/>
+      <TabPanel submit={dummySubmit}/>
     </div>
   );
 };
