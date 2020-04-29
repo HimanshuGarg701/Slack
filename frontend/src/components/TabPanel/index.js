@@ -1,11 +1,9 @@
 import React from 'react';
 import SwipeableViews from 'react-swipeable-views';
-import { makeStyles, Theme, useTheme } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
 import LoginForm from '../LoginForm'
 
 function TabPanel(props) {
@@ -19,9 +17,7 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
+        children
       )}
     </div>
   );
@@ -39,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     width: 330,
     margin: '100px auto'
-  },
+  }
 }));
 
 export default function FullWidthTabs({submit}) {
@@ -77,6 +73,7 @@ export default function FullWidthTabs({submit}) {
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
           <LoginForm submit={submit}/>
+          
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
           Item Two
