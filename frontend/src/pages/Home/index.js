@@ -11,8 +11,8 @@ import IconButton from "@material-ui/core/IconButton";
 import TextField from "@material-ui/core/TextField";
 
 // My imports
-import { logout } from "../redux/actions/index";
-import "../styles/Home.css";
+import { logout } from "../../redux/actions/index";
+import "./styles.css";
 
 const Home = props => {
   const [totalUsers, setTotalUsers] = React.useState(0);
@@ -56,7 +56,7 @@ const Home = props => {
           label=""
           defaultValue=""
           variant="outlined"
-        /> 
+        />
         <IconButton aria-label="delete">
           <SendIcon fontSize="large" />
         </IconButton>
