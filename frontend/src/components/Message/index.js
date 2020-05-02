@@ -14,6 +14,16 @@ const Message = props => {
       }}
     >
       <div
+        className="Message-name-container"
+        style={{
+          flexDirection: props.self ? "row-reverse" : "row",
+          marginRight: props.self ? "15px" : "0px",
+          marginLeft: props.self ? "0px" : "15px"
+        }}
+      >
+        {props.name ? props.name : "name"}
+      </div>
+      <div
         className="Message-touchable-container"
         style={{ flexDirection: props.self ? "row-reverse" : "row" }}
       >

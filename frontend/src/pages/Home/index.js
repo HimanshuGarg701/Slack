@@ -59,6 +59,7 @@ const Home = props => {
           body={
             "JainamShahJainamShahJainamShahJainamShahJainamShahJainamShahJainamShahJainamShahJainamShahJainamShahJainamShahJainamShahJainamShahJainam Shah"
           }
+          name={"Jainam"}
           self={true}
         />
         <Message body={"ahJainamhJainam Shah"} self={true} />
