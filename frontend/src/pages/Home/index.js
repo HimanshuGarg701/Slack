@@ -12,6 +12,7 @@ import TextField from "@material-ui/core/TextField";
 
 // My imports
 import { logout } from "../../redux/actions/index";
+import Message from "../../components/Message/index";
 import "./styles.css";
 
 const Home = props => {
@@ -49,6 +50,12 @@ const Home = props => {
         >
           Profile
         </Button>
+      </div>
+      <div id="Home-body">
+        {[1, 2, 3].map(num => {
+          return <Message body={num} />;
+        })}
+    
       </div>
       <div id="Home-footer">
         <TextField
