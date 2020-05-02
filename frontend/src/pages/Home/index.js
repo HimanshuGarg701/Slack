@@ -53,9 +53,15 @@ const Home = props => {
       </div>
       <div id="Home-body">
         {[1, 2, 3].map(num => {
-          return <Message body={num} />;
+          return <Message body={num} self={false} />;
         })}
-    
+        <Message
+          body={
+            "JainamShahJainamShahJainamShahJainamShahJainamShahJainamShahJainamShahJainamShahJainamShahJainamShahJainamShahJainamShahJainamShahJainam Shah"
+          }
+          self={true}
+        />
+        <Message body={"ahJainamhJainam Shah"} self={true} />
       </div>
       <div id="Home-footer">
         <TextField

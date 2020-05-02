@@ -21,16 +21,20 @@
 }
 
 #Home-body {
-  width: 90vw;
+  /* height: 70vh; */
+  width: 70vw;
 
-  display: flex;
+  /* display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: center; */
 
   position: fixed;
+  top: 80px;
   bottom: 100px;
-  left: 5vw;
-  right: 5vw;
+  left: 15vw;
+  right: 15vw;
+
+  overflow-y: scroll;
 
   /* background-color: aquamarine; */
 }
