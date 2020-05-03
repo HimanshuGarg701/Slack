@@ -25,8 +25,8 @@
   width: 70vw;
 
   /* display: flex;
-  flex-direction: column;
-  justify-content: center; */
+  flex-direction: row; */
+  /* justify-content: center; */
 
   position: fixed;
   top: 80px;
@@ -35,7 +35,6 @@
   right: 15vw;
 
   overflow-y: scroll;
-
   /* background-color: aquamarine; */
 }
 

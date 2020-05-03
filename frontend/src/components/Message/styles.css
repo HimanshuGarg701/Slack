@@ -12,6 +12,11 @@
   display: flex;
 
   margin-bottom: 3px;
+
+  font-size: 19px;
+  letter-spacing: 2px;
+  word-spacing: 3px;
+  font-weight: 600;
 }
 
 .Message-touchable-container {
@@ -26,7 +31,7 @@
 
   text-align: left !important;
   font-size: 17px;
-  text-overflow: "-" !important;
+  /* text-overflow: "-" !important; */
   letter-spacing: 2px;
   word-spacing: 3px;
   word-break: break-word;
