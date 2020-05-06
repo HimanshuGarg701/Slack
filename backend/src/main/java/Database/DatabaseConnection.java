@@ -11,7 +11,6 @@ public class DatabaseConnection {
     public static MongoClient getInstance() {
         if (mongoClient == null) {
             mongoClient = new MongoClient("localhost", 27017);
-
         }
         return mongoClient;
     }
