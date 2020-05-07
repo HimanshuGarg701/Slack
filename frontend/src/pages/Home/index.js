@@ -30,11 +30,19 @@ const ws = new WebSocket("ws://localhost:1235/ws");
 const Home = props => {
   // const [totalUsers, setTotalUsers] = React.useState(0);
   const [msgObjs, setMsgObjs] = React.useState([
-    { body: "heyy", username: "jainamshah", id: "1", likesCount: 0, likes: [] },
+    {
+      body: "heyy",
+      username: "jainamshah",
+      id: "1",
+      date: "21 Sept 2020, 2:00pm",
+      likesCount: 0,
+      likes: []
+    },
     {
       body: "yo",
       username: "blahha",
       id: "2",
+      date: "21 Sept 2020, 2:00pm",
       likesCount: 2,
       likes: [{ username: "jainamshah" }, { username: "blahha" }]
     },
@@ -42,6 +50,7 @@ const Home = props => {
       body: "whatsup",
       username: "blahha",
       id: "3",
+      date: "21 Sept 2020, 2:00pm",
       likesCount: 2,
       likes: [{ username: "jainamshah" }, { username: "blahha" }]
     },
@@ -49,6 +58,7 @@ const Home = props => {
       body: "Im playing PUBG!!!",
       username: "jainamshah",
       id: "4",
+      date: "21 Sept 2020, 2:00pm",
       likesCount: 1,
       likes: [{ username: "jainamshah" }]
     }
@@ -171,6 +181,7 @@ const Home = props => {
               body={msgObj.body}
               name={msgObj.username}
               self={self}
+              date={msgObj.date}
               likesCount={msgObj.likes.length}
               likeAction={() => likeMessage(msgObj.id)}
             />

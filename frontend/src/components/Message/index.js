@@ -59,6 +59,16 @@ const Message = props => {
           </div>
         ) : null}
       </div>
+      <div
+        className="Message-date"
+        style={{
+          flexDirection: props.self ? "row-reverse" : "row",
+          marginRight: props.self ? "10px" : "0px",
+          marginLeft: props.self ? "0px" : "10px"
+        }}
+      >
+        {props.date ? props.date : "date"}
+      </div>
     </div>
   );
 };
