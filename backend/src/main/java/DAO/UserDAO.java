@@ -61,15 +61,23 @@ public class UserDAO {
 
     public DTO userSignUp(String username, String password){
         DTO newUser = null;
+        boolean invalidUser = false;
         String id = UUID.randomUUID().toString();
-        try {
-            Document user = new Document("id", id)
-                    .append("username", username).append("password", password);
-            user_collection.insertOne(user);
-            newUser = new UserDTO(id, null, null);
-        }catch(Exception e){
-            System.out.println("Failed to insert user to database");
+        MongoCursor<Document> cursor = user_collection.find(new BasicDBObject("username", username)).iterator();
+        if(cursor.hasNext())
+            invalidUser = true;
+
+        if(!invalidUser) {
+            try {
+                Document user = new Document("id", id)
+                        .append("username", username).append("password", password);
+                user_collection.insertOne(user);
+                newUser = new UserDTO(id, null, null);
+            } catch (Exception e) {
+                System.out.println("Failed to insert user to database");
+            }
         }
+
         return newUser;
     }
 }
