@@ -1,6 +1,11 @@
 package Processor;
 
+import DAO.UserDAO;
+import DTO.DTO;
+import DTO.ResponseDTOhelper;
+import DTO.UserDTO;
 import DTO.ResponseDTO;
+import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
 
@@ -15,6 +20,23 @@ public class SignUpProcessor implements Processor {
 
     @Override
     public ResponseDTO process() {
-        return null;
+        DTO payload = null;
+        ResponseDTOhelper rbh = new ResponseDTOhelper();
+        boolean success = false;
+        Gson gson = new Gson();
+        UserDAO userDao = UserDAO.getInstance();
+        String bodyString = req.body();
+        try{
+            UserDTO userDTO = gson.fromJson(bodyString, UserDTO.class);
+            payload = userDao.userSignUp(userDTO.username, userDTO.password);
+            if(payload!=null){
+                success = true;
+            }
+        }catch(Exception e){
+            System.out.println("Failed To Execute LoginProcessor class");
+        }
+        rbh.setSuccess(success);
+        rbh.setPayload(payload);
+        return rbh.build();
     }
 }

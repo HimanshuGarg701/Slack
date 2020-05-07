@@ -10,6 +10,8 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
+import java.util.UUID;
+
 public class UserDAO {
 
     private static UserDAO userDao;
@@ -55,5 +57,19 @@ public class UserDAO {
             user = null;
         }
         return user;
+    }
+
+    public DTO userSignUp(String username, String password){
+        DTO newUser = null;
+        String id = UUID.randomUUID().toString();
+        try {
+            Document user = new Document("id", id)
+                    .append("username", username).append("password", password);
+            user_collection.insertOne(user);
+            newUser = new UserDTO(id, null, null);
+        }catch(Exception e){
+            System.out.println("Failed to insert user to database");
+        }
+        return newUser;
     }
 }
