@@ -30,18 +30,38 @@ const ws = new WebSocket("ws://localhost:1235/ws");
 const Home = props => {
   // const [totalUsers, setTotalUsers] = React.useState(0);
   const [msgObjs, setMsgObjs] = React.useState([
-    { body: "heyy", username: "jainamshah", id: "1", likes: 2 },
-    { body: "yo", username: "blahha", id: "2", likes: 2 },
-    { body: "whatsup", username: "blahha", id: "3", likes: 2 },
-    { body: "Im playing PUBG!!!", username: "jainamshah", id: "4", likes: 2 }
+    { body: "heyy", username: "jainamshah", id: "1", likesCount: 0, likes: [] },
+    {
+      body: "yo",
+      username: "blahha",
+      id: "2",
+      likesCount: 2,
+      likes: [{ username: "jainamshah" }, { username: "blahha" }]
+    },
+    {
+      body: "whatsup",
+      username: "blahha",
+      id: "3",
+      likesCount: 2,
+      likes: [{ username: "jainamshah" }, { username: "blahha" }]
+    },
+    {
+      body: "Im playing PUBG!!!",
+      username: "jainamshah",
+      id: "4",
+      likesCount: 1,
+      likes: [{ username: "jainamshah" }]
+    }
   ]);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const addMsgOnj = msgObj => {
+  const addMsgObj = msgObj => {
     setMsgObjs(msgObjs.concat([msgObj]));
   };
 
   useEffect(() => {
+    document.getElementById("Home-body").scrollIntoView({ block: "end" });
+    // scrollIntoView
     // request backend for initial messages
     Axios.get("/getMessages").then(res => {
       // success, payload;
@@ -54,16 +74,57 @@ const Home = props => {
     // make a socket connection to add notes as we go on
     // msgObj - {body-string, username-string,id-id of the message}
     ws.addEventListener("message", async msgObj => {
-      addMsgOnj(msgObj);
+      addMsgObj(msgObj);
     });
   }, []);
 
   const sendMessage = () => {
-    let msgBody = document.getElementById("message-input").value;
-    if (msgBody.length > 0) {
+    let msgBody = document.getElementById("message-input");
+    if (msgBody.value.length > 0) {
       // send a socket notif to bakend
       // {body-string, id-idOFtheuser}
-      ws.send({ id: props.userObj.id, body: msgBody });
+      ws.send({ id: props.userObj.id, body: msgBody.value });
+
+      setMsgObjs(
+        msgObjs.concat({
+          body: msgBody.value,
+          username: props.userObj.username,
+          id: toString(msgObjs.length + 100),
+          likesCount: 0,
+          likes: []
+        })
+      );
+      msgBody.value = "";
+    }
+  };
+
+  const likeMessage = messageId => {
+    var i = 0;
+    var j = 0;
+    var liked = false;
+    for (i = 0; i < msgObjs.length; i++) {
+      if (msgObjs[i].id == messageId) {
+        //
+        //
+        for (j = 0; j < msgObjs[i].likes.length; j++) {
+          if (msgObjs[i].likes[j].username === props.userObj.username) {
+            liked = true;
+            break;
+          }
+        }
+        //
+        //
+        if (liked) {
+          // unlike
+          msgObjs[i].likes.splice(j, 1);
+          setMsgObjs([...msgObjs]);
+        } else {
+          // like
+          msgObjs[i].likes.push({ username: props.userObj.username });
+          setMsgObjs([...msgObjs]);
+        }
+        break;
+      }
     }
   };
 
@@ -101,8 +162,18 @@ const Home = props => {
       </div>
       <div id="Home-body">
         {msgObjs.map(msgObj => {
+          var self = false;
+          if (msgObj.username === props.userObj.username) {
+            self = true;
+          }
           return (
-            <Message body={msgObj.body} name={msgObj.username} self={true} />
+            <Message
+              body={msgObj.body}
+              name={msgObj.username}
+              self={self}
+              likesCount={msgObj.likes.length}
+              likeAction={() => likeMessage(msgObj.id)}
+            />
           );
         })}
       </div>
@@ -128,7 +199,11 @@ const Home = props => {
 };
 
 const mapStateToProps = state => {
-  return { isUser: state.isUser, userObj: state.userObj };
+  return {
+    isUser: state.isUser,
+    // userObj: state.userObj
+    userObj: { id: "248324", username: "jainamshah" }
+  };
 };
 function mapDispatchToProps(dispatch) {
   return {

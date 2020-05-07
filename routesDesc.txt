@@ -69,7 +69,9 @@ like -
 		server (sends): message:{  id - id of message, likes: int }
 
 
-
+//////////////////
+notes:
+likes need to have userid who liked it so that we can unlike it next time
 
 
 
