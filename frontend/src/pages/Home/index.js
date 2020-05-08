@@ -90,7 +90,7 @@ const Home = props => {
   useEffect(() => {
     var messageContainer = document.getElementById("Home-body");
     messageContainer.scrollTop = messageContainer.scrollHeight;
-  });
+  }, [msgObjs.length]);
 
   const sendMessage = () => {
     let msgBody = document.getElementById("message-input");
