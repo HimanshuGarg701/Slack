@@ -55,7 +55,7 @@ const Message = props => {
                 color: "#f74e6e"
               }}
             />
-            {props.likesCount}
+            {props.likesCount > 1 ? props.likesCount : ""}
           </div>
         ) : null}
       </div>

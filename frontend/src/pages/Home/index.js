@@ -1,5 +1,5 @@
 // 3rd party imports
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
@@ -65,13 +65,12 @@ const Home = props => {
   ]);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+
   const addMsgObj = msgObj => {
     setMsgObjs(msgObjs.concat([msgObj]));
   };
 
   useEffect(() => {
-    document.getElementById("Home-body").scrollIntoView({ block: "end" });
-    // scrollIntoView
     // request backend for initial messages
     Axios.get("/getMessages").then(res => {
       // success, payload;
@@ -87,6 +86,11 @@ const Home = props => {
       addMsgObj(msgObj);
     });
   }, []);
+
+  useEffect(() => {
+    var messageContainer = document.getElementById("Home-body");
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+  });
 
   const sendMessage = () => {
     let msgBody = document.getElementById("message-input");
@@ -171,7 +175,7 @@ const Home = props => {
         </IconButton>
       </div>
       <div id="Home-body">
-        {msgObjs.map(msgObj => {
+        {msgObjs.map((msgObj, i) => {
           var self = false;
           if (msgObj.username === props.userObj.username) {
             self = true;
@@ -188,6 +192,7 @@ const Home = props => {
           );
         })}
       </div>
+
       <div id="Home-footer">
         <TextField
           id="message-input"
