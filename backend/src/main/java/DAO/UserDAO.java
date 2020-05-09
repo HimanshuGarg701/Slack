@@ -82,6 +82,31 @@ public class UserDAO {
     }
 
     public DTO updateUser(String username, String password){
-        return null;
+        DTO user;
+        Document updatedData = new Document();
+        updatedData.append("username", username).append("password", password);
+        try{
+            MongoCursor<Document> cursor = user_collection.find(new BasicDBObject("username", username)).iterator();
+            Document doc;
+            if(cursor.hasNext()){
+                doc = cursor.next();
+                Document update = new Document();
+                update.append("$set", updatedData);
+                user_collection.updateOne(doc, update);
+                    user = new UserDTO(
+                            (String) doc.get("id"),
+                            null,
+                            (String) doc.get("username"));
+
+            }else{
+                System.out.println("Reached here in else of update user");
+                user = null;
+            }
+            cursor.close();
+        }catch(Exception e){
+            System.out.println("ERROR IN USER DAO Updated user method");
+            user = null;
+    }
+        return user;
     }
 }

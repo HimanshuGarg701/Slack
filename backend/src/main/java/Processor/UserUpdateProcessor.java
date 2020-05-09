@@ -29,13 +29,15 @@ public class UserUpdateProcessor implements Processor {
         String bodyString = req.body();
         try {
             UserDTO userDTO = gson.fromJson(bodyString, UserDTO.class);
-            validUser = userDao.validUser(userDTO.username, userDTO.password);
-            if(validUser!=null){
-                payload = userDao.updateUser(userDTO.username, userDTO.password);
+            payload = userDao.updateUser(userDTO.username, userDTO.password);
+            if(payload!=null){
+                success = true;
             }
         }catch(Exception e){
             System.out.println("Error in User Updating");
         }
-        return null;
+        rbh.setSuccess(success);
+        rbh.setPayload(payload);
+        return rbh.build();
     }
 }

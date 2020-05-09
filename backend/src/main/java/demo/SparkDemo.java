@@ -2,6 +2,7 @@ package demo;
 
 import Processor.SignInProcessor;
 import Processor.SignUpProcessor;
+import Processor.UserUpdateProcessor;
 import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
@@ -14,6 +15,7 @@ public class SparkDemo {
         webSocket("/ws", WebSocketHandler.class);
         post("/auth/signin", SparkDemo::signin);
         post("/auth/signup", SparkDemo::signup);
+        post("/auth/updateUser", SparkDemo::updateUser);
     }
 
     private static Object signin(Request req, Response res) {
@@ -22,5 +24,9 @@ public class SparkDemo {
 
     private static Object signup(Request req, Response res) {
       return new Gson().toJson(new SignUpProcessor(req, res).process());
+    }
+
+    private static Object updateUser(Request req, Response res) {
+        return new Gson().toJson(new UserUpdateProcessor(req, res).process());
     }
 }
