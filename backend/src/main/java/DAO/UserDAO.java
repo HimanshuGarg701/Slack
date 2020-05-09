@@ -80,4 +80,8 @@ public class UserDAO {
 
         return newUser;
     }
+
+    public DTO updateUser(String username, String password){
+        return null;
+    }
 }
