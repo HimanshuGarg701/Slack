@@ -2,6 +2,7 @@ package Processor;
 
 import DAO.UserDAO;
 import DTO.DTO;
+import DTO.ErrorDTO;
 import DTO.ResponseDTOhelper;
 import DTO.UserDTO;
 import DTO.ResponseDTO;
@@ -31,6 +32,8 @@ public class SignUpProcessor implements Processor {
             payload = userDao.userSignUp(userDTO.username, userDTO.password);
             if(payload!=null){
                 success = true;
+            }else{
+                payload = new ErrorDTO("Username already exists");
             }
         }catch(Exception e){
             System.out.println("Failed To Execute LoginProcessor class");
