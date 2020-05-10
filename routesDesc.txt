@@ -1,6 +1,8 @@
 LOGIN ROUTES
 
 
+
+
 /auth/signin
 
 type: POST
@@ -10,9 +12,13 @@ request: {username, password}
 response: {success, payload}
 		success - boolean
 		payload(if error) - null
-		payload(no error) - {id (_id in mongo), displayname, (other info if we decide to add) }
+		payload(no error) - {id (_id in mongo)}
 
 // we will use _id to uniquely identify each user because it is faster to querry
+
+
+
+
 
 
 /auth/signup
@@ -20,7 +26,6 @@ response: {success, payload}
 type: POST
 request: {username, password}
 		username - string
-		displayname - string
 		password - string
 response: {success, payload}
 		success - boolean
@@ -42,8 +47,8 @@ type: GET
 request: null
 response: {success, payload}
 		success - boolean
-		payload(if error) - {error - string}
-		payload(no error) - { messages: [{body - string, username- string, id - id of message, likes- integer}] }
+		payload(if error) - {null}
+		payload(no error) - { messages: [{body - string, username- string, id - id of message, likes- integer, timestamp: string}] }
 
 
 
@@ -54,17 +59,19 @@ MESSAGING SOCKETS
 
 //if someone sends a message
 message - 
-		server (recieves): message:{body-string, id-idOFtheuser}  
-		server (sends): message:{body-string, username-string,id-id of the message}
+		server (recieves): message:{body: string, id: string}  
+		server (sends): message:{body - string, username- string, id - id of message, likes- integer, timestamp: string}
 
 
 // if someone likes a message
 like - 
-		server (recieves): message:{ id - id of message }  
-		server (sends): message:{  id - id of message }
+		server (recieves): message:{ id - id of message, incr: bool }
+		server (sends): message:{  id - id of message, likes: int }
 
 
-
+//////////////////
+notes:
+likes need to have userid who liked it so that we can unlike it next time
 
 
 
