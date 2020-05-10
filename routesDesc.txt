@@ -15,8 +15,6 @@ response: {success, payload}
 // we will use _id to uniquely identify each user because it is faster to querry
 
 
-
-
 /auth/signup
 
 type: POST
