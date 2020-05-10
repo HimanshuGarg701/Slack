@@ -9,7 +9,15 @@ import { login } from "../redux/actions/index";
 import TabPanel from '../components/TabPanel'
 
 const Login = props => {
-  const dummySubmit = (data) => {
+  const handleLogin = (data) => {
+    console.log(data)
+    props.login({
+      name: "somename",
+      someotherthing: "willbegiventouserobject"
+    })
+  }
+
+  const handleSignup = (data) => {
     console.log(data)
     props.login({
       name: "somename",
@@ -19,7 +27,7 @@ const Login = props => {
   return (
     <div>
       {props.isUser ? <Redirect to="/home" /> : null}
-      <TabPanel submit={dummySubmit}/>
+      <TabPanel handleLogin={handleLogin} handleSignup={handleSignup}/>
     </div>
   );
 };

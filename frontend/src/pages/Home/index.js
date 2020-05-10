@@ -24,6 +24,7 @@ import { logout } from "../../redux/actions/index";
 import Message from "../../components/Message/index";
 import "./styles.css";
 import Axios from "axios";
+import CurrentActiveUsers from '../../components/CurrentActiveUsers'
 
 const ws = new WebSocket("ws://localhost:1235/ws");
 
@@ -153,7 +154,7 @@ const Home = props => {
           setDrawerOpen(false);
         }}
       >
-        hello
+        <CurrentActiveUsers />
       </SwipeableDrawer>
 
       <div id="Home-header">
