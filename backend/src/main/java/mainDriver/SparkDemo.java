@@ -1,4 +1,4 @@
-package demo;
+package mainDriver;
 
 import Processor.SignInProcessor;
 import Processor.SignUpProcessor;
@@ -16,9 +16,10 @@ public class SparkDemo {
         post("/auth/signin", SparkDemo::signin);
         post("/auth/signup", SparkDemo::signup);
         post("/auth/updateUser", SparkDemo::updateUser);
+        get("/messages", SparkDemo::getMessages);
     }
 
-    private static Object signin(Request req, Response res) {
+    private static Object  signin(Request req, Response res) {
       return new Gson().toJson(new SignInProcessor(req, res).process());
     }
 
@@ -29,4 +30,9 @@ public class SparkDemo {
     private static Object updateUser(Request req, Response res) {
         return new Gson().toJson(new UserUpdateProcessor(req, res).process());
     }
+
+    private static Object getMessages(Request req, Response res) {
+        return new Gson().toJson(new SignUpProcessor(req, res).process());
+    }
+
 }
