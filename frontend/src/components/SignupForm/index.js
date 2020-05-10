@@ -10,9 +10,17 @@ import {
   FormControl,
 } from '@material-ui/core'
 import { Visibility, VisibilityOff } from '@material-ui/icons'
+import * as yup from 'yup'
 
-const LoginForm = ({ submit }) => {
-  
+const SignupForm = ({ submit }) => {
+  const loginValidationScheme = yup.object().shape({
+    username: yup.string().max(255).required('Required'),
+    password: yup
+      .string()
+      .min(6, 'Password is must be 6 characters')
+      .max(255)
+      .required('Required'),
+  })
 
   // STYLING
   const useStyles = makeStyles({
@@ -40,6 +48,7 @@ const LoginForm = ({ submit }) => {
           await submit(data)
           setSubmitting(false)
         }}
+        validationSchema={loginValidationScheme}
       >
         {({
           values,
@@ -94,7 +103,7 @@ const LoginForm = ({ submit }) => {
                 color='primary'
                 type='submit'
               >
-                Login
+                Signup
               </Button>
             </FormControl>
             {/* <pre>{JSON.stringify(values, null, 2)}</pre> */}
@@ -105,4 +114,4 @@ const LoginForm = ({ submit }) => {
   )
 }
 
-export default LoginForm
+export default SignupForm

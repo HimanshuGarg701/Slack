@@ -5,6 +5,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import LoginForm from '../LoginForm'
+import SignupForm from '../SignupForm'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -38,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function FullWidthTabs({submit}) {
+export default function FullWidthTabs({handleLogin, handleSignup}) {
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -72,11 +73,11 @@ export default function FullWidthTabs({submit}) {
         onChangeIndex={handleChangeIndex}
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
-          <LoginForm submit={submit}/>
+          <LoginForm submit={handleLogin}/>
           
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-          Item Two
+          <SignupForm submit={handleSignup} />
         </TabPanel>
       </SwipeableViews>
     </div>
