@@ -67,7 +67,7 @@
             <configuration>
               <archive>
                 <manifest>
-                  <mainClass>demo.SparkDemo</mainClass>
+                  <mainClass>mainDriver.SparkDemo</mainClass>
                 </manifest>
               </archive>
               <descriptorRefs>
