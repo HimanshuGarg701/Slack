@@ -2,7 +2,8 @@ package Processor;
 
 import DAO.UserDAO;
 import DTO.DTO;
-import DTO.UserDTO;
+import DTO.ErrorDTO;
+import DTO.UpdatedUserDTO;
 import DTO.ResponseDTOhelper;
 import DTO.ResponseDTO;
 import com.google.gson.Gson;
@@ -28,10 +29,15 @@ public class UserUpdateProcessor implements Processor {
         UserDAO userDao = UserDAO.getInstance();
         String bodyString = req.body();
         try {
-            UserDTO userDTO = gson.fromJson(bodyString, UserDTO.class);
-            payload = userDao.updateUser(userDTO.username, userDTO.password);
-            if(payload!=null){
-                success = true;
+            UpdatedUserDTO userDTO = gson.fromJson(bodyString, UpdatedUserDTO.class);
+            validUser = userDao.validUser(userDTO.username, userDTO.password);
+            if(validUser==null){
+                payload = new ErrorDTO("You entered your current password incorrectly");
+            }else {
+                payload = userDao.updateUser(userDTO.username, userDTO.newPassword);
+
+                if(payload!=null)
+                    success = true;
             }
         }catch(Exception e){
             System.out.println("Error in User Updating");
