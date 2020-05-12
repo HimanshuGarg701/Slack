@@ -15,6 +15,7 @@ public class SparkDemo {
         post("/auth/signup", SparkDemo::signup);
         post("/auth/updateUser", SparkDemo::updateUser);
         get("/messages", SparkDemo::getMessages);
+        get("/allUsers", SparkDemo::getAllUsers);
     }
 
     private static Object  signin(Request req, Response res) {
@@ -31,5 +32,9 @@ public class SparkDemo {
 
     private static Object getMessages(Request req, Response res) {
         return new Gson().toJson(new getMessagesProcessor().process());
+    }
+
+    private static Object getAllUsers(Request req, Response res){
+        return new Gson().toJson(new UsersProcessor().process());
     }
 }
