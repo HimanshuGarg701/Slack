@@ -197,7 +197,7 @@ const Home = props => {
           setDrawerOpen(false);
         }}
       >
-        <CurrentActiveUsers />
+        <CurrentActiveUsers setDrawerOpen={setDrawerOpen}/>
       </SwipeableDrawer>
 
       <div id="Home-header">

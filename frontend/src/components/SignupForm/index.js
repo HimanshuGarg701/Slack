@@ -26,12 +26,16 @@ const SignupForm = ({ submit }) => {
   const useStyles = makeStyles({
     form: {
       margin: '10px auto',
-      height: '250px',
+      height: '300px',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      justifyContent: 'space-between',
-    }
+      justifyContent: 'center',
+    },
+    box: {
+      width: '200px',
+      marginBottom: '1.5rem',
+    },
   })
   const classes = useStyles()
 
@@ -61,16 +65,20 @@ const SignupForm = ({ submit }) => {
           <Form className={classes.form}>
             <TextField
               placeholder='username'
+              className={classes.box}
               name='username'
               label='username'
               error={errors.username ? true : false}
               value={values.username}
               onChange={handleChange}
               onBlur={handleBlur}
-              helperText={errors.username && touched.username && errors.username}
+              helperText={
+                errors.username && touched.username && errors.username
+              }
             />
             <TextField
               placeholder='password'
+              className={classes.box}
               label='password'
               name='password'
               error={errors.password ? true : false}
@@ -102,6 +110,7 @@ const SignupForm = ({ submit }) => {
                 variant='contained'
                 color='primary'
                 type='submit'
+                style={{ marginTop: '1.5rem' }}
               >
                 Signup
               </Button>

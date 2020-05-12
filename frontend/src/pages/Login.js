@@ -5,7 +5,7 @@ import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 
 // My imports
-import { login } from "../redux/actions/index";
+import { login } from "../redux/actions";
 import TabPanel from '../components/TabPanel'
 
 const Login = props => {
