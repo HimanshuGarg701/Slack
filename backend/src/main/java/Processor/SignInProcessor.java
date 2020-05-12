@@ -2,6 +2,7 @@ package Processor;
 
 import DAO.UserDAO;
 import DTO.DTO;
+import DTO.ErrorDTO;
 import DTO.ResponseDTO;
 import DTO.ResponseDTOhelper;
 import DTO.UserDTO;
@@ -31,6 +32,9 @@ public class SignInProcessor implements Processor {
             payload = userDao.validUser(userDTO.username, userDTO.password);
             if(payload!=null){
                 success = true;
+            }
+            else{
+                payload = new ErrorDTO("Wrong username or password");
             }
         }catch(Exception e){
             System.out.println("Failed To Execute LoginProcessor class");
