@@ -18,20 +18,45 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import SvgIcon from '@material-ui/core/SvgIcon';
 import './styles.css'
+import axios from 'axios'
+
 const User = () => {
-    const [showMenu, setShowMenu] = useState(false);
     const [username, setUsername] = useState('Mjcanson');
     const [password, SetPassword] = useState('');
+    const [newPassword, SetNewPassword] = useState('');
+    const [error,setError] = useState(null);
+
+    const [showMenu, setShowMenu] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
-    const [showEditUsername, setShowEditUsername] = useState(false);
     const [showChangePassword, setShowChangePassword] = useState(false);
 
-    const theme = useTheme();
+    const handleChangePassword = () => {
+        const body = {
 
-    const handleEditUsernameClick = e => {
-        setShowEditUsername(true);
-    };
+            username: username,
+            password: password,
+            newPassword: newPassword
+
+        }
+
+        axios.post('/auth/updateUser',body)
+        .then((res) => {
+            
+            if(res.data.success) {
+                console.log('password changed succesfully!');
+                console.log(res.data.password);
+
+            }else {
+                setError(res.data.error);
+            }
+        })
+        .catch(()=> {
+            setError('password change failed. Try again.');
+        });
+    }
+
 
     const handleshowChangePassword = e => {
         setShowChangePassword(true);
@@ -48,14 +73,18 @@ const User = () => {
     const handleClose = () => {
         setShowMenu(null);
     };
-    const handleEditUsernameClose = () => {
-        setShowEditUsername(false);
-    };
+   
 
     const handleshowChangePasswordClose = () => {
         setShowChangePassword(false);
     };
-
+    const HomeIcon =(props)=> {
+        return (
+          <SvgIcon {...props}>
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+          </SvgIcon>
+        );
+      }
 
 
     const open = Boolean(anchorEl);
@@ -66,25 +95,15 @@ const User = () => {
             <div className="header-root">
                 <AppBar position="static">
                     <Toolbar>
-                        {/* <SwipeableDrawer
-                            anchor={"left"}
-                            // open={showMenu}
-                            onClose={() => {
-                                setShowMenu(false);
-                            }}
-                        >
-                            <MenuItem onClick={handleClose}> Edit Profile</MenuItem>
-                            <MenuItem onClick={handleClose}> Chat Room</MenuItem>
-                            <MenuItem onClick={handleClose}> Edit Profile</MenuItem>
-                        </SwipeableDrawer> */}
                         <IconButton onClick={() => setShowMenu(!showMenu)}
                             edge="start" className="icon-button" color="inherit" aria-label="menu">
                             <MenuIcon />
 
                         </IconButton>
                         <Typography variant="h6" className="header-title">
-                            User's Profile
+                            {username}'s Profile
                         </Typography>
+                        <HomeIcon fontSize="large"  />
                         <Button color="inherit">Logout</Button>
                     </Toolbar>
                 </AppBar>
@@ -101,6 +120,7 @@ const User = () => {
 
                             <Typography variant="h6" className="header-title">
                                 @{username}
+                                
                             </Typography>
 
                         </Grid>
@@ -118,13 +138,8 @@ const User = () => {
                                 anchorEl={anchorEl}
                                 keepMounted
                                 open={Boolean(anchorEl)}
-                                onClose={handlePopperClose}
-
-                            >
-                                <MenuItem onClick={() => {
-                                    handleClose();
-                                    handleEditUsernameClick();
-                                }}>Edit Username</MenuItem>
+                                onClose={handlePopperClose}>
+                                
                                 <MenuItem onClick={() => {
                                     handleClose();
                                     handleshowChangePassword();
@@ -133,31 +148,6 @@ const User = () => {
                             </Menu>
 
                         </Grid>
-
-                        <Dialog open={showEditUsername} onClose={handleEditUsernameClose} aria-labelledby="form-dialog-title">
-                            <DialogTitle id="form-dialog-title">Edit Username</DialogTitle>
-                            <DialogContent>
-                                <DialogContentText>
-                                    Enter your Desired username
-                                    </DialogContentText>
-                                <TextField
-                                    autoFocus
-                                    margin="dense"
-                                    id="name"
-                                    label="username"
-                                    type="text"
-                                    fullWidth
-                                />
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={handleEditUsernameClose} color="primary">
-                                    Cancel
-                                </Button>
-                                <Button onClick={handleEditUsernameClose} color="primary">
-                                    Confirm
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
 
                         <Dialog open={showChangePassword} onClose={handleshowChangePasswordClose} aria-labelledby="form-dialog-title">
                             <DialogTitle id="form-dialog-title">Change Password</DialogTitle>
@@ -195,7 +185,11 @@ const User = () => {
                                 <Button onClick={handleshowChangePasswordClose} color="primary">
                                     Cancel
                                 </Button>
-                                <Button onClick={handleshowChangePasswordClose} color="primary">
+                                <Button onClick={()=> {
+                                    handleChangePassword();
+                                    if(error=== null)
+                                        handleshowChangePasswordClose();
+                                    }} color="primary">
                                     Confirm
                                 </Button>
                             </DialogActions>
@@ -209,6 +203,6 @@ const User = () => {
 }
 
 export default User
-
+//TODO provide a home button to go back to chatroom
 
 
