@@ -11,6 +11,11 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import spark.Response;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
 import static com.mongodb.client.model.Filters.*;
 
 public class MessageDAO {
@@ -26,7 +31,7 @@ public class MessageDAO {
         MongoClient mongoClient = DatabaseConnection.getInstance();
 
         //For lazy loading
-        if(messagesCollection == null) messagesCollection = mongoClient.getDatabase("MyDatabase").getCollection("Messages");
+        if(messagesCollection == null) messagesCollection = mongoClient.getDatabase("finalProjectDB").getCollection("Messages");
 
         Document messageDoc = new Document();
 
@@ -49,7 +54,7 @@ public class MessageDAO {
         MongoClient mongoClient = DatabaseConnection.getInstance();
 
         //For lazy loading
-        if(messagesCollection == null) messagesCollection = mongoClient.getDatabase("MyDatabase").getCollection("Messages");
+        if(messagesCollection == null) messagesCollection = mongoClient.getDatabase("finalProjectDB").getCollection("Messages");
 
         //This will be the document used to return the Res dto.
         Iterable<Document> messageFound = messagesCollection.find(new Document( "_id", new ObjectId(messageId)));
@@ -60,5 +65,32 @@ public class MessageDAO {
         messagesCollection.updateOne(eq("_id", new ObjectId(messageId)), new Document("$inc", new Document("likeCount", likeFlag)));
 
         return new MessageResPayloadDTO(messageFound.iterator().next().get("_id").toString(), messageFound.iterator().next().get("username").toString(), messageFound.iterator().next().get("message").toString(), (int) messageFound.iterator().next().get("likeCount"));
+    }
+
+    public static List<DTO> getAllMessages(){
+        MongoClient mongoClient = DatabaseConnection.getInstance();
+
+        //For lazy loading
+        if(messagesCollection == null) messagesCollection = mongoClient.getDatabase("finalProjectDB").getCollection("Messages");
+
+        //The list to be returned.
+        List<DTO> messageDTOs = new ArrayList<DTO>();
+
+        //Document Iterator used to go over each document.
+        Iterator messagesIterator = messagesCollection.find().iterator();
+
+
+        Document message;
+
+        while (messagesIterator.hasNext()){
+            message = (Document) messagesIterator.next();
+
+            DTO messageResDTO = new MessageResPayloadDTO( message.get("_id").toString(), (String) message.get("username"), (String) message.get("message"), (Integer) message.get("likeCount"));
+
+            messageDTOs.add(messageResDTO);
+        }
+
+
+        return messageDTOs;
     }
 }
