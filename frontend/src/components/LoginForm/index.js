@@ -12,18 +12,20 @@ import {
 import { Visibility, VisibilityOff } from '@material-ui/icons'
 
 const LoginForm = ({ submit }) => {
-  
-
   // STYLING
   const useStyles = makeStyles({
     form: {
       margin: '10px auto',
-      height: '250px',
+      height: '300px',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      justifyContent: 'space-between',
-    }
+      justifyContent: 'center',
+    },
+    box: {
+      width: '200px',
+      marginBottom: '1.5rem',
+    },
   })
   const classes = useStyles()
 
@@ -51,6 +53,7 @@ const LoginForm = ({ submit }) => {
         }) => (
           <Form className={classes.form}>
             <TextField
+              className={classes.box}
               placeholder='username'
               name='username'
               label='username'
@@ -58,10 +61,13 @@ const LoginForm = ({ submit }) => {
               value={values.username}
               onChange={handleChange}
               onBlur={handleBlur}
-              helperText={errors.username && touched.username && errors.username}
+              helperText={
+                errors.username && touched.username && errors.username
+              }
             />
             <TextField
               placeholder='password'
+              className={classes.box}
               label='password'
               name='password'
               error={errors.password ? true : false}
@@ -93,6 +99,7 @@ const LoginForm = ({ submit }) => {
                 variant='contained'
                 color='primary'
                 type='submit'
+                style={{ marginTop: '1.5rem' }}
               >
                 Login
               </Button>
