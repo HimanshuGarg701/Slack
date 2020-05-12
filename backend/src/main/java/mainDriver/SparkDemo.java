@@ -1,8 +1,6 @@
 package mainDriver;
 
-import Processor.SignInProcessor;
-import Processor.SignUpProcessor;
-import Processor.UserUpdateProcessor;
+import Processor.*;
 import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
@@ -32,6 +30,6 @@ public class SparkDemo {
     }
 
     private static Object getMessages(Request req, Response res) {
-        return new Gson().toJson(new SignUpProcessor(req, res).process());
+        return new Gson().toJson(new getMessagesProcessor().process());
     }
 }
