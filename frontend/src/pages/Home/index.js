@@ -24,7 +24,7 @@ import { logout } from "../../redux/actions/index";
 import Message from "../../components/Message/index";
 import "./styles.css";
 import Axios from "axios";
-import CurrentActiveUsers from '../../components/CurrentActiveUsers'
+import CurrentActiveUsers from "../../components/CurrentActiveUsers";
 
 const ws = new WebSocket("ws://localhost:1235/ws");
 
@@ -36,7 +36,7 @@ const Home = props => {
       username: "jainamshah",
       id: "1",
       date: "21 Sept 2020, 2:00pm",
-      likesCount: 0,
+      likeCount: 0,
       likes: []
     },
     {
@@ -44,24 +44,24 @@ const Home = props => {
       username: "blahha",
       id: "2",
       date: "21 Sept 2020, 2:00pm",
-      likesCount: 2,
-      likes: [{ username: "jainamshah" }, { username: "blahha" }]
+      likeCount: 2,
+      likes: ["jainamshah", "blahha"]
     },
     {
       body: "whatsup",
       username: "blahha",
       id: "3",
       date: "21 Sept 2020, 2:00pm",
-      likesCount: 2,
-      likes: [{ username: "jainamshah" }, { username: "blahha" }]
+      likeCount: 2,
+      likes: ["jainamshah", "blahha"]
     },
     {
       body: "Im playing PUBG!!!",
       username: "jainamshah",
       id: "4",
       date: "21 Sept 2020, 2:00pm",
-      likesCount: 1,
-      likes: [{ username: "jainamshah" }]
+      likeCount: 1,
+      likes: ["jainamshah"]
     }
   ]);
 
@@ -75,16 +75,40 @@ const Home = props => {
     // request backend for initial messages
     Axios.get("/getMessages").then(res => {
       // success, payload;
-
       if (res.success) {
         setMsgObjs(res.payload);
       } else {
       }
     });
     // make a socket connection to add notes as we go on
-    // msgObj - {body-string, username-string,id-id of the message}
+
     ws.addEventListener("message", async msgObj => {
-      addMsgObj(msgObj);
+      addMsgObj(msgObj.payload);
+    });
+
+    ws.addEventListener("like", async likeObj => {
+      // likeObj:
+      //   {
+      // success: bool
+      // payload:{
+      //   body: "Im playing PUBG!!!",
+      //   username: "jainamshah",
+      //   id: "4",
+      //   date: "21 Sept 2020, 2:00pm",
+      //   likeCount: 1,
+      //   likes: ["jainamshah" ]
+      // }
+      // }
+
+      for (let i = 0; i < msgObjs.length; i++) {
+        if (likeObj.payload.id == msgObjs[i].id) {
+          // change that object to this new object
+          msgObjs[i].likes = likeObj.payload.likes;
+          msgObjs[i].likeCount = likeObj.payload.likeCount;
+          setMsgObjs([...msgObjs]);
+          break;
+        }
+      }
     });
   }, []);
 
@@ -98,17 +122,20 @@ const Home = props => {
     if (msgBody.value.length > 0) {
       // send a socket notif to bakend
       // {body-string, id-idOFtheuser}
-      ws.send({ id: props.userObj.id, body: msgBody.value });
+      ws.send({ username: props.userObj.username, body: msgBody.value });
 
+      // remove: only for testing
       setMsgObjs(
         msgObjs.concat({
           body: msgBody.value,
           username: props.userObj.username,
           id: toString(msgObjs.length + 100),
-          likesCount: 0,
+          likeCount: 0,
           likes: []
         })
       );
+      // end
+
       msgBody.value = "";
     }
   };
@@ -122,7 +149,7 @@ const Home = props => {
         //
         //
         for (j = 0; j < msgObjs[i].likes.length; j++) {
-          if (msgObjs[i].likes[j].username === props.userObj.username) {
+          if (msgObjs[i].likes[j] === props.userObj.username) {
             liked = true;
             break;
           }
@@ -131,12 +158,28 @@ const Home = props => {
         //
         if (liked) {
           // unlike
+          ws.send({
+            likeFlag: -1,
+            id: messageId,
+            username: props.userObj.username
+          });
+
+          // test: remove after
           msgObjs[i].likes.splice(j, 1);
           setMsgObjs([...msgObjs]);
+          // end
         } else {
           // like
-          msgObjs[i].likes.push({ username: props.userObj.username });
+          ws.send({
+            likeFlag: 1,
+            id: messageId,
+            username: props.userObj.username
+          });
+
+          // test: remove after
+          msgObjs[i].likes.push(props.userObj.username);
           setMsgObjs([...msgObjs]);
+          // end
         }
         break;
       }
@@ -187,7 +230,7 @@ const Home = props => {
               name={msgObj.username}
               self={self}
               date={msgObj.date}
-              likesCount={msgObj.likes.length}
+              likeCount={msgObj.likes.length}
               likeAction={() => likeMessage(msgObj.id)}
             />
           );

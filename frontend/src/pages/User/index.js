@@ -203,6 +203,5 @@ const User = () => {
 }
 
 export default User
-//TODO provide a home button to go back to chatroom
 
 

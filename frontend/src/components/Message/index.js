@@ -38,7 +38,7 @@ const Message = props => {
         >
           {props.body ? props.body : "message"}
         </ButtonBase>
-        {props.likesCount > 0 ? (
+        {props.likeCount > 0 ? (
           <div
             style={{
               display: "flex",
@@ -55,7 +55,7 @@ const Message = props => {
                 color: "#f74e6e"
               }}
             />
-            {props.likesCount > 1 ? props.likesCount : ""}
+            {props.likeCount > 1 ? props.likeCount : ""}
           </div>
         ) : null}
       </div>
