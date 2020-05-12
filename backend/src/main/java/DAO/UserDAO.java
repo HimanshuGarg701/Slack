@@ -17,7 +17,7 @@ public class UserDAO {
     private static UserDAO userDao;
 
     private static MongoClient mongoClient = DatabaseConnection.getInstance();
-    private static MongoDatabase db = mongoClient.getDatabase("slack");
+    private static MongoDatabase db = mongoClient.getDatabase("finalProjectDB");
     private static MongoCollection<Document> user_collection = db.getCollection("users");
 
     private UserDAO(){

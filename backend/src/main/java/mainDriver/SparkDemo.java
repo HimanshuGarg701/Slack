@@ -34,5 +34,4 @@ public class SparkDemo {
     private static Object getMessages(Request req, Response res) {
         return new Gson().toJson(new SignUpProcessor(req, res).process());
     }
-
 }
