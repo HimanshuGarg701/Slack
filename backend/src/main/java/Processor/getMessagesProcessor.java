@@ -1,10 +1,17 @@
 package Processor;
 
-import DTO.ResponseDTO;
+import DTO.ResponseDTO_withDTOList_helper;
+import DTO.ResponseDTO_withDTOList;
 
-public class getMessagesProcessor implements Processor {
+import static DAO.MessageDAO.getAllMessages;
+
+public class getMessagesProcessor implements ProcessorMessages {
     @Override
-    public ResponseDTO process() {
-        return null;
+    public ResponseDTO_withDTOList process() {
+
+        ResponseDTO_withDTOList_helper resHelper = new ResponseDTO_withDTOList_helper();
+        resHelper.setSuccess(true);
+        resHelper.setPayload(getAllMessages());
+        return resHelper.build();
     }
 }
