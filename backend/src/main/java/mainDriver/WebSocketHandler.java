@@ -1,10 +1,7 @@
 package mainDriver;
 
 import DAO.MessageDAO;
-import DTO.InternalMessageDTO;
-import DTO.MessageResPayloadDTO;
-import DTO.ResponseDTO;
-import DTO.ResponseDTOhelper;
+import DTO.*;
 import Processor.MessageProcessor;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
@@ -20,11 +17,11 @@ public class WebSocketHandler {
   Gson gson = new Gson();
 
 
-  public void broadcast(ResponseDTO responseDto){
+  public void broadcast(BroadcastDTO responseDto){
     sessionMap.keySet().forEach( (session) ->{
       try{
         //send out responseDto to each active session.
-        session.getRemote().sendString(gson.toJson(responseDto, ResponseDTO.class));
+        session.getRemote().sendString(gson.toJson(responseDto, BroadcastDTO.class));
       }
       catch (Exception e){
         //prints the call stack for error tracing.
@@ -48,7 +45,7 @@ public class WebSocketHandler {
   @OnWebSocketMessage
   public void message(Session session, String message) throws IOException {
     System.out.println("Got: " + message);   // Print message
-    ResponseDTO responseDto = new MessageProcessor(message).process();
+    BroadcastDTO responseDto = new MessageProcessor(message).process();
     System.out.println("Broadcasting: " + gson.toJson(responseDto));   // Print message
 
     broadcast(responseDto);
