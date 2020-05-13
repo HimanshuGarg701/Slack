@@ -14,10 +14,10 @@ public class SparkDemo {
         post("/auth/signin", SparkDemo::signin);
         post("/auth/signup", SparkDemo::signup);
         post("/auth/updateUser", SparkDemo::updateUser);
-        get("/messages", SparkDemo::getMessages);
+        get("/getMessages", SparkDemo::getMessages);
     }
 
-    private static Object  signin(Request req, Response res) {
+    private static Object signin(Request req, Response res) {
       return new Gson().toJson(new SignInProcessor(req, res).process());
     }
 
