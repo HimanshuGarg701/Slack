@@ -30,84 +30,48 @@ const ws = new WebSocket("ws://localhost:1235/ws");
 
 const Home = props => {
   // const [totalUsers, setTotalUsers] = React.useState(0);
-  const [msgObjs, setMsgObjs] = React.useState([
-    {
-      body: "heyy",
-      username: "jainamshah",
-      id: "1",
-      date: "21 Sept 2020, 2:00pm",
-      likeCount: 0,
-      likes: []
-    },
-    {
-      body: "yo",
-      username: "blahha",
-      id: "2",
-      date: "21 Sept 2020, 2:00pm",
-      likeCount: 2,
-      likes: ["jainamshah", "blahha"]
-    },
-    {
-      body: "whatsup",
-      username: "blahha",
-      id: "3",
-      date: "21 Sept 2020, 2:00pm",
-      likeCount: 2,
-      likes: ["jainamshah", "blahha"]
-    },
-    {
-      body: "Im playing PUBG!!!",
-      username: "jainamshah",
-      id: "4",
-      date: "21 Sept 2020, 2:00pm",
-      likeCount: 1,
-      likes: ["jainamshah"]
-    }
-  ]);
+  const [msgObjs, setMsgObjs] = React.useState([]);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const addMsgObj = msgObj => {
-    setMsgObjs(msgObjs.concat([msgObj]));
+    msgObjs.push(msgObj);
+    setMsgObjs([...msgObjs]);
+    // console.log(msgObjs);
   };
 
   useEffect(() => {
     // request backend for initial messages
     Axios.get("/getMessages").then(res => {
       // success, payload;
-      if (res.success) {
-        setMsgObjs(res.payload);
+      if (res.data.success) {
+        for (let i = 0; i < res.data.payload.length; i++) {
+          addMsgObj(res.data.payload[i]);
+        }
       } else {
+        alert("Please reload the page");
       }
     });
     // make a socket connection to add notes as we go on
 
     ws.addEventListener("message", async msgObj => {
-      addMsgObj(msgObj.payload);
-    });
-
-    ws.addEventListener("like", async likeObj => {
-      // likeObj:
-      //   {
-      // success: bool
-      // payload:{
-      //   body: "Im playing PUBG!!!",
-      //   username: "jainamshah",
-      //   id: "4",
-      //   date: "21 Sept 2020, 2:00pm",
-      //   likeCount: 1,
-      //   likes: ["jainamshah" ]
-      // }
-      // }
-
-      for (let i = 0; i < msgObjs.length; i++) {
-        if (likeObj.payload.id == msgObjs[i].id) {
-          // change that object to this new object
-          msgObjs[i].likes = likeObj.payload.likes;
-          msgObjs[i].likeCount = likeObj.payload.likeCount;
-          setMsgObjs([...msgObjs]);
-          break;
+      let parsedData = JSON.parse(msgObj.data); 
+      if (parsedData.typeOfMessage == "MESSAGE") {
+        //
+        addMsgObj(parsedData.payload);
+        //
+      } else if (parsedData.typeOfMessage == "LIKE") {
+        //
+        for (let i = 0; i < msgObjs.length; i++) {
+          if (parsedData.payload.id == msgObjs[i].id) {
+            // change that object to this new object
+            msgObjs[i].likes = parsedData.payload.likes;
+            msgObjs[i].likeCount = parsedData.payload.likeCount;
+            setMsgObjs([...msgObjs]);
+            break;
+          }
         }
+        //
       }
     });
   }, []);
@@ -120,21 +84,12 @@ const Home = props => {
   const sendMessage = () => {
     let msgBody = document.getElementById("message-input");
     if (msgBody.value.length > 0) {
-      // send a socket notif to bakend
-      // {body-string, id-idOFtheuser}
-      ws.send({ username: props.userObj.username, body: msgBody.value });
-
-      // remove: only for testing
-      setMsgObjs(
-        msgObjs.concat({
-          body: msgBody.value,
+      ws.send(
+        JSON.stringify({
           username: props.userObj.username,
-          id: toString(msgObjs.length + 100),
-          likeCount: 0,
-          likes: []
+          body: msgBody.value
         })
       );
-      // end
 
       msgBody.value = "";
     }
@@ -158,27 +113,31 @@ const Home = props => {
         //
         if (liked) {
           // unlike
-          ws.send({
-            likeFlag: -1,
-            id: messageId,
-            username: props.userObj.username
-          });
+          ws.send(
+            JSON.stringify({
+              likeFlag: -1,
+              id: messageId,
+              username: props.userObj.username
+            })
+          );
 
           // test: remove after
-          msgObjs[i].likes.splice(j, 1);
-          setMsgObjs([...msgObjs]);
+          // msgObjs[i].likes.splice(j, 1);
+          // setMsgObjs([...msgObjs]);
           // end
         } else {
           // like
-          ws.send({
-            likeFlag: 1,
-            id: messageId,
-            username: props.userObj.username
-          });
+          ws.send(
+            JSON.stringify({
+              likeFlag: 1,
+              id: messageId,
+              username: props.userObj.username
+            })
+          );
 
           // test: remove after
-          msgObjs[i].likes.push(props.userObj.username);
-          setMsgObjs([...msgObjs]);
+          // msgObjs[i].likes.push(props.userObj.username);
+          // setMsgObjs([...msgObjs]);
           // end
         }
         break;
@@ -188,7 +147,7 @@ const Home = props => {
 
   return (
     <div id="Home-root">
-      {/* {!props.isUser ? <Redirect to="/login" /> : null} */}
+      {!props.isUser || props.userObj == null ? <Redirect to="/login" /> : null}
 
       <SwipeableDrawer
         anchor={"right"}
@@ -197,7 +156,7 @@ const Home = props => {
           setDrawerOpen(false);
         }}
       >
-        <CurrentActiveUsers setDrawerOpen={setDrawerOpen}/>
+        <CurrentActiveUsers setDrawerOpen={setDrawerOpen} />
       </SwipeableDrawer>
 
       <div id="Home-header">
@@ -219,22 +178,24 @@ const Home = props => {
         </IconButton>
       </div>
       <div id="Home-body">
-        {msgObjs.map((msgObj, i) => {
-          var self = false;
-          if (msgObj.username === props.userObj.username) {
-            self = true;
-          }
-          return (
-            <Message
-              body={msgObj.body}
-              name={msgObj.username}
-              self={self}
-              date={msgObj.date}
-              likeCount={msgObj.likes.length}
-              likeAction={() => likeMessage(msgObj.id)}
-            />
-          );
-        })}
+        {msgObjs != null
+          ? msgObjs.map((msgObj, i) => {
+              var self = false;
+              if (msgObj.username === props.userObj.username) {
+                self = true;
+              }
+              return (
+                <Message
+                  body={msgObj.body}
+                  name={msgObj.username}
+                  self={self}
+                  date={msgObj.date}
+                  likeCount={msgObj.likes.length}
+                  likeAction={() => likeMessage(msgObj.id)}
+                />
+              );
+            })
+          : null}
       </div>
 
       <div id="Home-footer">
@@ -261,8 +222,8 @@ const Home = props => {
 const mapStateToProps = state => {
   return {
     isUser: state.isUser,
-    // userObj: state.userObj
-    userObj: { id: "248324", username: "jainamshah" }
+    userObj: state.userObj
+    // userObj: { id: "248324", username: "jainamshah" }
   };
 };
 function mapDispatchToProps(dispatch) {

@@ -6,28 +6,29 @@ import { connect } from "react-redux";
 
 // My imports
 import { login } from "../redux/actions";
-import TabPanel from '../components/TabPanel'
+import TabPanel from "../components/TabPanel";
+
+import Axios from "axios";
 
 const Login = props => {
-  const handleLogin = (data) => {
-    console.log(data)
+  const handleLogin = data => {
+    console.log(data);
     props.login({
-      name: "somename",
-      someotherthing: "willbegiventouserobject"
-    })
-  }
+      username: data.username
+    });
+  };
 
-  const handleSignup = (data) => {
-    console.log(data)
+  const handleSignup = data => {
+    console.log(data);
+    console.log(data);
     props.login({
-      name: "somename",
-      someotherthing: "willbegiventouserobject"
-    })
-  }
+      username: data.username
+    });
+  };
   return (
     <div>
       {props.isUser ? <Redirect to="/home" /> : null}
-      <TabPanel handleLogin={handleLogin} handleSignup={handleSignup}/>
+      <TabPanel handleLogin={handleLogin} handleSignup={handleSignup} />
     </div>
   );
 };
