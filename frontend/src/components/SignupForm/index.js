@@ -12,7 +12,7 @@ import {
 import { Visibility, VisibilityOff } from '@material-ui/icons'
 import * as yup from 'yup'
 
-const SignupForm = ({ submit }) => {
+const SignupForm = ({ submit, isLoading, error }) => {
   const loginValidationScheme = yup.object().shape({
     username: yup.string().max(255).required('Required'),
     password: yup
@@ -42,8 +42,12 @@ const SignupForm = ({ submit }) => {
   // ~ Logic
   const [showPassword, handleShowPassword] = React.useState(false)
 
+  if(isLoading) {
+    return <div>Loading</div>
+  }
+
   return (
-    <>
+    <React.Fragment>
       <Formik
         initialValues={{ username: '', password: '' }}
         onSubmit={async (data, { setSubmitting }) => {
@@ -104,6 +108,7 @@ const SignupForm = ({ submit }) => {
                 ),
               }}
             />
+            {error && <p style={{color: 'red'}}>{error}</p>}
             <FormControl>
               <Button
                 disabled={isSubmitting}
@@ -119,7 +124,7 @@ const SignupForm = ({ submit }) => {
           </Form>
         )}
       </Formik>
-    </>
+    </React.Fragment>
   )
 }
 

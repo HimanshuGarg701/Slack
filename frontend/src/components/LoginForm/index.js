@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core'
 import { Visibility, VisibilityOff } from '@material-ui/icons'
 
-const LoginForm = ({ submit }) => {
+const LoginForm = ({ submit, isLoading, error }) => {
   // STYLING
   const useStyles = makeStyles({
     form: {
@@ -32,8 +32,12 @@ const LoginForm = ({ submit }) => {
   // ~ Logic
   const [showPassword, handleShowPassword] = React.useState(false)
 
+  if (isLoading) {
+    return <div>Loading</div>
+  }
+
   return (
-    <>
+    <React.Fragment>
       <Formik
         initialValues={{ username: '', password: '' }}
         onSubmit={async (data, { setSubmitting }) => {
@@ -93,6 +97,7 @@ const LoginForm = ({ submit }) => {
                 ),
               }}
             />
+            {error && <p style={{ color: 'red' }}>{error}</p>}
             <FormControl>
               <Button
                 disabled={isSubmitting}
@@ -108,7 +113,7 @@ const LoginForm = ({ submit }) => {
           </Form>
         )}
       </Formik>
-    </>
+    </React.Fragment>
   )
 }
 

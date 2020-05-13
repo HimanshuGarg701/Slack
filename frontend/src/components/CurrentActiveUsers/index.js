@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
 
 // My imports
 import ActiveUser from '../ActiveUser'
@@ -15,30 +16,26 @@ const CurrentActiveUsers = ({ usersList, setUsers, setDrawerOpen }) => {
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    setIsLoading(true)
     if (usersList) {
-      console.log('UsersList Found')
-      console.log('UsersInRedux: ' + usersList)
       setNewUsers(usersList)
+      setIsLoading(false)
     } else {
-      setIsLoading(true)
-      // api request
-      console.log('UsersList Not Found')
-      setNewUsers([
-        'steven',
-        'Jainam',
-        'Michael',
-        'Himanshu',
-        'Ramy',
-        'Super Long UserName Just Incase',
-      ])
-      setUsers([
-        'steven',
-        'Jainam',
-        'Michael',
-        'Himanshu',
-        'Ramy',
-        'Super Long UserName Just Incase',
-      ])
+      axios
+        .get('/allUsers')
+        .then((res) => {
+          if (res.data.success === true) {
+            setNewUsers(res.data.payload)
+            setUsers(res.data.payload)
+          } else {
+            setError('Error loading users')
+          }
+          setIsLoading(false)
+        })
+        .catch((e) => {
+          console.warn(e.message)
+          setError('Error loading users')
+        })
     }
     setIsLoading(false)
     setError(null)
@@ -77,8 +74,8 @@ const CurrentActiveUsers = ({ usersList, setUsers, setDrawerOpen }) => {
             <Divider variant='middle' />
           </Typography>
           {users.length > 0 ? (
-            users.map((username, index) => {
-              return <ActiveUser key={index} username={username} />
+            users.map((user, index) => {
+              return <ActiveUser key={index} username={user.username}/>
             })
           ) : (
             <div>No users found</div>
