@@ -18,7 +18,8 @@ export const darkTheme = createMuiTheme({
       black: '#1c181d',
       eggshell: '#f1f1e1',
       white: '#FFFFFF',
-      background: '#a682a6'
+      background: '#a682a6',
+      messageDate: '#d6d6d6'
     },
     header: {
       background: '#f5f5f5',
@@ -64,7 +65,8 @@ export const lightTheme = createMuiTheme({
       black: '#1c181d',
       eggshell: '#f1f1e1',
       white: '#FFFFFF',
-      background: '#fde4fd'
+      background: '#fde4fd',
+      messageDate: '#8e8e8e'
     },
     header: {
       background: '#f5f5f5',
