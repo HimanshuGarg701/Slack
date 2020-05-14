@@ -10,7 +10,7 @@ import ActiveUser from '../ActiveUser'
 import { setUsers } from '../../redux/actions'
 import { Typography, Divider, Button } from '@material-ui/core'
 
-const CurrentActiveUsers = ({ usersList, setUsers, setDrawerOpen }) => {
+const CurrentActiveUsers = ({ usersList, setUsers, setDrawerOpen, userObj }) => {
   const [users, setNewUsers] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -47,6 +47,8 @@ const CurrentActiveUsers = ({ usersList, setUsers, setDrawerOpen }) => {
   if (error) {
     return <div>{error}</div>
   }
+
+  console.log(userObj)
 
   return (
     <ComponentContainer>
@@ -87,7 +89,7 @@ const CurrentActiveUsers = ({ usersList, setUsers, setDrawerOpen }) => {
 }
 
 const mapStateToProps = (state) => {
-  return { usersList: state.usersList }
+  return { usersList: state.usersList, userObj: state.userObj }
 }
 
 function mapDispatchToProps(dispatch) {

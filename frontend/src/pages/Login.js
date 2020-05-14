@@ -23,6 +23,7 @@ const Login = (props) => {
         if (res.data.success === true) {
           props.login({
             username: data.username,
+            password: data.password
           })
         } else {
           setError(res.data.payload.message || 'Error signing in')
@@ -45,6 +46,7 @@ const Login = (props) => {
         if (res.data.success === true) {
           props.login({
             username: data.username,
+            password: data.password
           })
         } else {
           setError(res.data.payload.message || 'Error signing up')
