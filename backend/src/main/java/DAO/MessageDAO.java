@@ -48,11 +48,14 @@ public class MessageDAO {
                 .append("username", message.username)
                 .append("body", message.body)
                 .append("likeCount", message.likeCount)
-                .append("likes", message.likes)
+                .append("likes", message.likes == null ? new ArrayList<>() : message.likes)
                 .append("date", message.date);
-
-        messagesCollection.insertOne(messageDoc);
-
+        try {
+            messagesCollection.insertOne(messageDoc);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
         Iterable<Document> messagesFound = messagesCollection.find(messageDoc);
 
         return messagesFound.iterator().next().get("_id").toString();
