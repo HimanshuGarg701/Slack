@@ -15,7 +15,7 @@ const App = () => {
 
   return (
     <ThemeProvider theme={darkThemeActivated ? darkTheme : lightTheme}>
-      <Routes />
+      <Routes handleThemeToggle={handleThemeToggle}/>
     </ThemeProvider>
   )
 }

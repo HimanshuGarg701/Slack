@@ -4,11 +4,11 @@ import Home from "./pages/Home/index";
 import Login from "./pages/Login";
 import User from './pages/User/index'
 
-export const Routes = () => (
+export const Routes = ({handleThemeToggle}) => (
   <BrowserRouter>
     <Switch>
       <Route exact={true} path="/home">
-        <Home />
+        <Home handleThemeToggle={handleThemeToggle}/>
       </Route>
       <Route exact={true} path="/login">
         <Login />

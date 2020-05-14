@@ -12,7 +12,7 @@ import {
 import { Visibility, VisibilityOff } from '@material-ui/icons'
 import * as yup from 'yup'
 
-const SignupForm = ({ submit }) => {
+const SignupForm = ({ submit, isLoading, error }) => {
   const loginValidationScheme = yup.object().shape({
     username: yup.string().max(255).required('Required'),
     password: yup
@@ -26,20 +26,28 @@ const SignupForm = ({ submit }) => {
   const useStyles = makeStyles({
     form: {
       margin: '10px auto',
-      height: '250px',
+      height: '300px',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      justifyContent: 'space-between',
-    }
+      justifyContent: 'center',
+    },
+    box: {
+      width: '200px',
+      marginBottom: '1.5rem',
+    },
   })
   const classes = useStyles()
 
   // ~ Logic
   const [showPassword, handleShowPassword] = React.useState(false)
 
+  if(isLoading) {
+    return <div>Loading</div>
+  }
+
   return (
-    <>
+    <React.Fragment>
       <Formik
         initialValues={{ username: '', password: '' }}
         onSubmit={async (data, { setSubmitting }) => {
@@ -61,16 +69,20 @@ const SignupForm = ({ submit }) => {
           <Form className={classes.form}>
             <TextField
               placeholder='username'
+              className={classes.box}
               name='username'
               label='username'
               error={errors.username ? true : false}
               value={values.username}
               onChange={handleChange}
               onBlur={handleBlur}
-              helperText={errors.username && touched.username && errors.username}
+              helperText={
+                errors.username && touched.username && errors.username
+              }
             />
             <TextField
               placeholder='password'
+              className={classes.box}
               label='password'
               name='password'
               error={errors.password ? true : false}
@@ -96,12 +108,14 @@ const SignupForm = ({ submit }) => {
                 ),
               }}
             />
+            {error && <p style={{color: 'red'}}>{error}</p>}
             <FormControl>
               <Button
                 disabled={isSubmitting}
                 variant='contained'
                 color='primary'
                 type='submit'
+                style={{ marginTop: '1.5rem' }}
               >
                 Signup
               </Button>
@@ -110,7 +124,7 @@ const SignupForm = ({ submit }) => {
           </Form>
         )}
       </Formik>
-    </>
+    </React.Fragment>
   )
 }
 

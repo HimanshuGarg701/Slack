@@ -1,91 +1,77 @@
 // 3rd party imports
 import React, { useState, useEffect, useRef } from "react";
 
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 
 import SendIcon from "@material-ui/icons/Send";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import TextField from "@material-ui/core/TextField";
-
-import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
-import List from "@material-ui/core/List";
-import Divider from "@material-ui/core/Divider";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
+import SettingsBrightnessIcon from "@material-ui/icons/SettingsBrightness";
+import {
+  Button,
+  IconButton,
+  TextField,
+  SwipeableDrawer,
+  useTheme
+} from "@material-ui/core";
 
 // My imports
 import { logout } from "../../redux/actions/index";
 import Message from "../../components/Message/index";
 import "./styles.css";
 import Axios from "axios";
-import CurrentActiveUsers from '../../components/CurrentActiveUsers'
+import CurrentActiveUsers from "../../components/CurrentActiveUsers";
 
 const ws = new WebSocket("ws://localhost:1235/ws");
 
 const Home = props => {
+  const theme = useTheme();
   // const [totalUsers, setTotalUsers] = React.useState(0);
-  const [msgObjs, setMsgObjs] = React.useState([
-    {
-      body: "heyy",
-      username: "jainamshah",
-      id: "1",
-      date: "21 Sept 2020, 2:00pm",
-      likesCount: 0,
-      likes: []
-    },
-    {
-      body: "yo",
-      username: "blahha",
-      id: "2",
-      date: "21 Sept 2020, 2:00pm",
-      likesCount: 2,
-      likes: [{ username: "jainamshah" }, { username: "blahha" }]
-    },
-    {
-      body: "whatsup",
-      username: "blahha",
-      id: "3",
-      date: "21 Sept 2020, 2:00pm",
-      likesCount: 2,
-      likes: [{ username: "jainamshah" }, { username: "blahha" }]
-    },
-    {
-      body: "Im playing PUBG!!!",
-      username: "jainamshah",
-      id: "4",
-      date: "21 Sept 2020, 2:00pm",
-      likesCount: 1,
-      likes: [{ username: "jainamshah" }]
-    }
-  ]);
+  const [msgObjs, setMsgObjs] = React.useState([]);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const addMsgObj = msgObj => {
-    setMsgObjs(msgObjs.concat([msgObj]));
+    msgObjs.push(msgObj);
+    setMsgObjs([...msgObjs]);
   };
 
   useEffect(() => {
-    // request backend for initial messages
-    Axios.get("/getMessages").then(res => {
-      // success, payload;
+    if (props.isUser === true || props.userObj !== null) {
+      // request backend for initial messages
+      Axios.get("/getMessages").then(res => {
+        // success, payload;
+        if (res.data.success) {
+          for (let i = 0; i < res.data.payload.length; i++) {
+            addMsgObj(res.data.payload[i]);
+          }
+        } else {
+          alert("Please reload the page");
+        }
+      });
+      // make a socket connection to add notes as we go on
 
-      if (res.success) {
-        setMsgObjs(res.payload);
-      } else {
-      }
-    });
-    // make a socket connection to add notes as we go on
-    // msgObj - {body-string, username-string,id-id of the message}
-    ws.addEventListener("message", async msgObj => {
-      addMsgObj(msgObj);
-    });
+      ws.addEventListener("message", async msgObj => {
+        let parsedData = JSON.parse(msgObj.data);
+        if (parsedData.typeOfMessage == "MESSAGE") {
+          //
+          addMsgObj(parsedData.payload);
+          //
+        } else if (parsedData.typeOfMessage == "LIKE") {
+          //
+          for (let i = 0; i < msgObjs.length; i++) {
+            if (parsedData.payload.id == msgObjs[i].id) {
+              // change that object to this new object
+              msgObjs[i].likes = parsedData.payload.likes;
+              msgObjs[i].likeCount = parsedData.payload.likeCount;
+              setMsgObjs([...msgObjs]);
+              break;
+            }
+          }
+          //
+        }
+      });
+    }
   }, []);
 
   useEffect(() => {
@@ -96,19 +82,13 @@ const Home = props => {
   const sendMessage = () => {
     let msgBody = document.getElementById("message-input");
     if (msgBody.value.length > 0) {
-      // send a socket notif to bakend
-      // {body-string, id-idOFtheuser}
-      ws.send({ id: props.userObj.id, body: msgBody.value });
-
-      setMsgObjs(
-        msgObjs.concat({
-          body: msgBody.value,
+      ws.send(
+        JSON.stringify({
           username: props.userObj.username,
-          id: toString(msgObjs.length + 100),
-          likesCount: 0,
-          likes: []
+          body: msgBody.value
         })
       );
+
       msgBody.value = "";
     }
   };
@@ -120,32 +100,47 @@ const Home = props => {
     for (i = 0; i < msgObjs.length; i++) {
       if (msgObjs[i].id == messageId) {
         //
-        //
         for (j = 0; j < msgObjs[i].likes.length; j++) {
-          if (msgObjs[i].likes[j].username === props.userObj.username) {
+          if (msgObjs[i].likes[j] === props.userObj.username) {
             liked = true;
             break;
           }
         }
         //
-        //
+
         if (liked) {
           // unlike
-          msgObjs[i].likes.splice(j, 1);
-          setMsgObjs([...msgObjs]);
+          ws.send(
+            JSON.stringify({
+              likeFlag: -1,
+              id: messageId,
+              username: props.userObj.username
+            })
+          );
         } else {
           // like
-          msgObjs[i].likes.push({ username: props.userObj.username });
-          setMsgObjs([...msgObjs]);
+          ws.send(
+            JSON.stringify({
+              likeFlag: 1,
+              id: messageId,
+              username: props.userObj.username
+            })
+          );
         }
         break;
       }
     }
   };
+  const history = useHistory();
 
   return (
-    <div id="Home-root">
-      {/* {!props.isUser ? <Redirect to="/login" /> : null} */}
+    <div
+      id="Home-root"
+      style={{ backgroundColor: theme.palette.common.background }}
+    >
+      {!props.isUser || props.userObj === null ? (
+        <Redirect to="/login" />
+      ) : null}
 
       <SwipeableDrawer
         anchor={"right"}
@@ -154,7 +149,7 @@ const Home = props => {
           setDrawerOpen(false);
         }}
       >
-        <CurrentActiveUsers />
+        <CurrentActiveUsers setDrawerOpen={setDrawerOpen} />
       </SwipeableDrawer>
 
       <div id="Home-header">
@@ -163,11 +158,20 @@ const Home = props => {
           variant="contained"
           color="primary"
           size="large"
-          onClick={() => props.logout()}
+          onClick={() => {
+            history.push("/login");
+            props.logout();
+          }}
         >
           LOGOUT
         </Button>
 
+        <Button
+          onClick={props.handleThemeToggle}
+          style={{ marginLeft: "auto" }}
+        >
+          <SettingsBrightnessIcon />
+        </Button>
         <IconButton
           aria-label="users"
           onClick={() => setDrawerOpen(!drawerOpen)}
@@ -176,22 +180,25 @@ const Home = props => {
         </IconButton>
       </div>
       <div id="Home-body">
-        {msgObjs.map((msgObj, i) => {
-          var self = false;
-          if (msgObj.username === props.userObj.username) {
-            self = true;
-          }
-          return (
-            <Message
-              body={msgObj.body}
-              name={msgObj.username}
-              self={self}
-              date={msgObj.date}
-              likesCount={msgObj.likes.length}
-              likeAction={() => likeMessage(msgObj.id)}
-            />
-          );
-        })}
+        {props.isUser || props.userObj !== null || msgObjs != null
+          ? msgObjs.map((msgObj, i) => {
+              var self = false;
+
+              if (msgObj.username === props.userObj.username) {
+                self = true;
+              }
+              return (
+                <Message
+                  body={msgObj.body}
+                  name={msgObj.username}
+                  self={self}
+                  date={msgObj.date}
+                  likeCount={msgObj.likes.length}
+                  likeAction={() => likeMessage(msgObj.id)}
+                />
+              );
+            })
+          : null}
       </div>
 
       <div id="Home-footer">
@@ -201,6 +208,7 @@ const Home = props => {
           label=""
           defaultValue=""
           variant="outlined"
+          autoComplete="off"
         />
         <IconButton
           aria-label="send"
@@ -218,13 +226,15 @@ const Home = props => {
 const mapStateToProps = state => {
   return {
     isUser: state.isUser,
-    // userObj: state.userObj
-    userObj: { id: "248324", username: "jainamshah" }
+    userObj: state.userObj
+    // userObj: { id: "248324", username: "jainamshah" }
   };
 };
 function mapDispatchToProps(dispatch) {
   return {
-    logout: () => dispatch(logout())
+    logout: () => {
+      dispatch(logout());
+    }
   };
 }
 
