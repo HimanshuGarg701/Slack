@@ -1,39 +1,23 @@
-import React from 'react';
-import './App.css';
+// 3rd party imports
+import React from 'react'
+import { ThemeProvider } from '@material-ui/core/styles'
 
-const App = ({ }) => {
-  const [totalUsers, setTotalUsers] = React.useState(0);
-  const [notes, setNotes] = React.useState(['test']);
-  const [note, setNote] = React.useState('');
+// my imports
+import './styles/App.css'
+import { lightTheme, darkTheme } from './styles/theme'
+import { Routes } from './Routes'
 
-  const handleSubmit = () => {
-    console.log(note);
-    setNote('');
-  };
-
-  React.useEffect(() => {
-    
-  }, []);
+const App = () => {
+  const [darkThemeActivated, setDarkThemeActivated] = React.useState(false)
+  const handleThemeToggle = () => {
+    setDarkThemeActivated(!darkThemeActivated)
+  }
 
   return (
-    <div className="App">
-      <header className="user-counter">
-        {totalUsers} : Users
-      </header>
-      <div>
-        <input value={note} onChange={e => setNote(e.target.value)} />
-        <button onClick={handleSubmit}>Submit</button>
-      </div>
-      <div className="notes">
-        {notes.map((note, i) => (
-          <div className="note-item" key={i}>
-            <div>{i}</div>
-            <div>{note}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+    <ThemeProvider theme={darkThemeActivated ? darkTheme : lightTheme}>
+      <Routes handleThemeToggle={handleThemeToggle}/>
+    </ThemeProvider>
+  )
 }
 
-export default App;
+export default App
