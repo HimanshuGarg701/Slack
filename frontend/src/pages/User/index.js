@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useTheme } from '@material-ui/core/styles';
 import Button from "@material-ui/core/Button";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import IconButton from '@material-ui/core/IconButton';
@@ -12,7 +11,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import TextField from '@material-ui/core/TextField';
-
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -21,8 +19,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import './styles.css'
 import axios from 'axios'
+import { login } from '../../redux/actions'
+import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 
-const User = () => {
+const User = ({ userObj }, props) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [oldPassword, setOldPassword] = useState('');
@@ -38,39 +39,43 @@ const User = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [showChangePassword, setShowChangePassword] = useState(false);
-    console.log(newPassword)
-    console.log(verifyNewPassword)
-    console.log(oldPassword)
 
     const handleChangePassword = () => {
-        // handleVerifyPassword();
+        handleVerifyPassword();
 
-      
-            const body = {
 
-                username: username,
-                password: oldPassword,
-                newPassword: newPassword
+        const body = {
 
-            }
+            username: username,
+            password: oldPassword,
+            newPassword: newPassword
 
-            axios.post('/auth/updateUser', body)
-                
-                .then((res) => {
-                    console.log(res)
-                    if (res.data.success) {
-                        console.log(res.data.BaseResponse)
-                        console.log('password changed succesfully!');
-                        console.log(res.data.password);
-                        handleshowChangePasswordClose()
+        }
 
-                    } else {
-                        setError(res.data.error);
-                    }
-                })
-                .catch(() => {
-                    setError('password change failed. Try again.');
-                });
+        axios.post('/auth/updateUser', body)
+
+            .then((res) => {
+                console.log(res)
+                if (res.data.success) {
+                    console.log(res.data.BaseResponse)
+                    console.log('password changed succesfully!');
+                    console.log(res.data.password);
+                    props.login({
+                        username: username,
+                        password: newPassword
+                    })
+                    setPasswordError(true)
+                    setShowChangePassword(false);
+
+                } else {
+                    setError(res.data.error);
+                    setPasswordError(true)
+                }
+            })
+            .catch(() => {
+                setError('password change failed. Try again.');
+
+            });
         console.log(error)
     }
 
@@ -82,7 +87,7 @@ const User = () => {
         const newPass = newPassword.localeCompare(verifyNewPassword);
         if (newPass === 0) {
             console.log('new password matches!')
-
+            setNewPasswordError(false);
         } else {
             console.log('new password does not match')
             setNewPasswordError(true);
@@ -112,7 +117,12 @@ const User = () => {
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
             </SvgIcon>
         );
+
     }
+    React.useEffect(() => {
+        setUsername(userObj.username)
+        setPassword(userObj.password)
+    }, [username, password])
 
 
     const open = Boolean(anchorEl);
@@ -131,8 +141,13 @@ const User = () => {
                         <Typography variant="h6" className="header-title">
                             {username}'s Profile
                         </Typography>
-                        <HomeIcon fontSize="large" />
-                        <Button color="inherit">Logout</Button>
+
+                        <Link to='/home'>
+                            <HomeIcon fontSize="large" />
+                        </Link>
+
+
+
                     </Toolbar>
                 </AppBar>
             </div>
@@ -182,9 +197,20 @@ const User = () => {
                             <DialogContent>
                                 <DialogContentText>
                                     Please verify your old password before entering new password.
-                                    </DialogContentText>
+                                </DialogContentText>
+
+                                <DialogContentText>
+                                    <strong> {passwordError ? 'Incorrect password. Try again.' : null}</strong>
+                                </DialogContentText>
+
+                                <DialogContentText>
+
+                                    <strong> {newPasswordError ? 'Passwords does not match. Try Again' : null}</strong>
+
+                                </DialogContentText>
+
                                 <TextField
-                                    onChange={(e) => { setOldPassword(e.target.value)}}
+                                    onChange={(e) => { setOldPassword(e.target.value) }}
                                     error={passwordError}
                                     autoFocus
                                     margin="dense"
@@ -230,7 +256,15 @@ const User = () => {
         </div>
     )
 }
+const mapStateToProps = (state) => {
+    return { userObj: state.userObj }
+}
+function mapDispatchToProps(dispatch) {
+    return {
+        login: (userObj) => dispatch(login(userObj)),
 
-export default User
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(User)
 
 
