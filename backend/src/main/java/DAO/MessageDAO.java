@@ -8,6 +8,7 @@ import com.mongodb.client.MongoCursor;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.*;
@@ -17,14 +18,24 @@ public class MessageDAO {
     private static MongoCollection messagesCollection = null;
     private static final String DBName = "finalProjectDB";
     private static final String CollectionName = "Messages";
+    private static MessageDAO messageDAO = null;
 
     private MessageDAO(){
 
     }
 
+    public static MessageDAO getInstance(){
+        if(messageDAO == null){
+            messageDAO = new MessageDAO();
+            messageDAO.insertMessage(new InternalMessageDTO(null, "default", "Hi I'm a template message from the default user.", 0, 0, Calendar.getInstance().getTime().toString(), null));
+        }
+
+        return messageDAO;
+    }
+
 
     //This will return the message ID of the message created for inc and dec likeCount later.
-    public static String insertMessage(InternalMessageDTO message){
+    public String insertMessage(InternalMessageDTO message){
         MongoClient mongoClient = DatabaseConnection.getInstance();
 
         //For lazy loading
@@ -37,7 +48,7 @@ public class MessageDAO {
                 .append("username", message.username)
                 .append("body", message.body)
                 .append("likeCount", message.likeCount)
-                .append("likes", message.likes == null? new String[0] : message.likes)
+                .append("likes", message.likes)
                 .append("date", message.date);
 
         messagesCollection.insertOne(messageDoc);
@@ -49,7 +60,7 @@ public class MessageDAO {
 
 
     //Updates likeCount.
-    public static DTO updateLikeCount(String messageId, String username, int likeFlag){
+    public DTO updateLikeCount(String messageId, String username, int likeFlag){
         MongoClient mongoClient = DatabaseConnection.getInstance();
 
         //For lazy loading
@@ -85,7 +96,7 @@ public class MessageDAO {
     }
 
 
-    public static List<DTO> getAllMessages(){
+    public List<DTO> getAllMessages(){
         MongoClient mongoClient = DatabaseConnection.getInstance();
 
         //For lazy loading
