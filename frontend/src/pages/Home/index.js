@@ -208,6 +208,7 @@ const Home = props => {
           label=""
           defaultValue=""
           variant="outlined"
+          autoComplete="off"
         />
         <IconButton
           aria-label="send"
