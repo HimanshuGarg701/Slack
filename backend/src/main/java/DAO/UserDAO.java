@@ -29,8 +29,11 @@ public class UserDAO {
     public static UserDAO getInstance(){
         if(userDao == null){
             userDao = new UserDAO();
+            Document user = new Document("id", UUID.randomUUID().toString())
+                    .append("username", "default").append("password", 123456);
+            user_collection.insertOne(user);
         }
-
+        
         return userDao;
     }
 
