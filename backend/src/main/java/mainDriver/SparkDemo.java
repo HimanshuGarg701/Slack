@@ -7,15 +7,15 @@ import spark.Response;
 
 import static spark.Spark.*;
 
-public class mainDriver {
+public class SparkDemo {
     public static void main(String[] args) {
         port(1235);
         webSocket("/ws", WebSocketHandler.class);
-        post("/auth/signin", mainDriver::signin);
-        post("/auth/signup", mainDriver::signup);
-        post("/auth/updateUser", mainDriver::updateUser);
-        get("/getMessages", mainDriver::getMessages);
-        get("/allUsers", mainDriver::getAllUsers);
+        post("/auth/signin", SparkDemo::signin);
+        post("/auth/signup", SparkDemo::signup);
+        post("/auth/updateUser", SparkDemo::updateUser);
+        get("/getMessages", SparkDemo::getMessages);
+        get("/allUsers", SparkDemo::getAllUsers);
     }
 
     private static Object signin(Request req, Response res) {
