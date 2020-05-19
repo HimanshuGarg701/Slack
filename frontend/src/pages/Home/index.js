@@ -1,5 +1,5 @@
 // 3rd party imports
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Redirect, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
@@ -53,14 +53,14 @@ const Home = props => {
 
       ws.addEventListener("message", async msgObj => {
         let parsedData = JSON.parse(msgObj.data);
-        if (parsedData.typeOfMessage == "MESSAGE") {
+        if (parsedData.typeOfMessage === "MESSAGE") {
           //
           addMsgObj(parsedData.payload);
           //
-        } else if (parsedData.typeOfMessage == "LIKE") {
+        } else if (parsedData.typeOfMessage === "LIKE") {
           //
           for (let i = 0; i < msgObjs.length; i++) {
-            if (parsedData.payload.id == msgObjs[i].id) {
+            if (parsedData.payload.id === msgObjs[i].id) {
               // change that object to this new object
               msgObjs[i].likes = parsedData.payload.likes;
               msgObjs[i].likeCount = parsedData.payload.likeCount;
@@ -72,6 +72,7 @@ const Home = props => {
         }
       });
     }
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -98,7 +99,7 @@ const Home = props => {
     var j = 0;
     var liked = false;
     for (i = 0; i < msgObjs.length; i++) {
-      if (msgObjs[i].id == messageId) {
+      if (msgObjs[i].id === messageId) {
         //
         for (j = 0; j < msgObjs[i].likes.length; j++) {
           if (msgObjs[i].likes[j] === props.userObj.username) {
