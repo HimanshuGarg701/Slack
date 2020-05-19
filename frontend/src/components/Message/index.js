@@ -1,11 +1,13 @@
 import React from "react";
 
 import ButtonBase from "@material-ui/core/ButtonBase";
+import { useTheme } from "@material-ui/core";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 
 import "./styles.css";
 
 const Message = props => {
+  const theme = useTheme();
   return (
     // align-self: flex-end;
     <div
@@ -19,7 +21,8 @@ const Message = props => {
         style={{
           flexDirection: props.self ? "row-reverse" : "row",
           marginRight: props.self ? "15px" : "0px",
-          marginLeft: props.self ? "0px" : "15px"
+          marginLeft: props.self ? "0px" : "15px",
+          color: theme.palette.common.messageName
         }}
       >
         {props.name ? props.name : "name"}
@@ -38,7 +41,7 @@ const Message = props => {
         >
           {props.body ? props.body : "message"}
         </ButtonBase>
-        {props.likesCount > 0 ? (
+        {props.likeCount > 0 ? (
           <div
             style={{
               display: "flex",
@@ -55,13 +58,14 @@ const Message = props => {
                 color: "#f74e6e"
               }}
             />
-            {props.likesCount > 1 ? props.likesCount : ""}
+            {props.likeCount > 1 ? props.likeCount : ""}
           </div>
         ) : null}
       </div>
       <div
         className="Message-date"
         style={{
+          color: theme.palette.common.messageDate,
           flexDirection: props.self ? "row-reverse" : "row",
           marginRight: props.self ? "10px" : "0px",
           marginLeft: props.self ? "0px" : "10px"

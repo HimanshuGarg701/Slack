@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function FullWidthTabs({handleLogin, handleSignup}) {
+export default function FullWidthTabs({handleLogin, handleSignup, isLoading, error}) {
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -73,11 +73,10 @@ export default function FullWidthTabs({handleLogin, handleSignup}) {
         onChangeIndex={handleChangeIndex}
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
-          <LoginForm submit={handleLogin}/>
-          
+          <LoginForm submit={handleLogin} isLoading={isLoading} error={error}/>
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-          <SignupForm submit={handleSignup} />
+          <SignupForm submit={handleSignup} isLoading={isLoading} error={error}/>
         </TabPanel>
       </SwipeableViews>
     </div>

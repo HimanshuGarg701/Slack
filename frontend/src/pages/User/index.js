@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useTheme } from '@material-ui/core/styles';
 import Button from "@material-ui/core/Button";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import IconButton from '@material-ui/core/IconButton';
@@ -12,30 +11,89 @@ import Toolbar from '@material-ui/core/Toolbar';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import TextField from '@material-ui/core/TextField';
-
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import SvgIcon from '@material-ui/core/SvgIcon';
 import './styles.css'
-const User = () => {
+import axios from 'axios'
+import { login } from '../../redux/actions'
+import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
+
+const User = ({ userObj }, props) => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [oldPassword, setOldPassword] = useState('');
+    const [verifyNewPassword, setVerifyNewPassword] = useState('');
+
+    const [newPassword, setNewPassword] = useState('');
+    const [passwordError, setPasswordError] = useState(false);
+    const [newPasswordError, setNewPasswordError] = useState(false);
+
+
+    const [error, setError] = useState(null);
+
     const [showMenu, setShowMenu] = useState(false);
-    const [username, setUsername] = useState('Mjcanson');
-    const [password, SetPassword] = useState('');
     const [anchorEl, setAnchorEl] = useState(null);
-    const [showEditUsername, setShowEditUsername] = useState(false);
     const [showChangePassword, setShowChangePassword] = useState(false);
 
-    const theme = useTheme();
+    const handleChangePassword = () => {
+        handleVerifyPassword();
 
-    const handleEditUsernameClick = e => {
-        setShowEditUsername(true);
-    };
+
+        const body = {
+
+            username: username,
+            password: oldPassword,
+            newPassword: newPassword
+
+        }
+
+        axios.post('/auth/updateUser', body)
+
+            .then((res) => {
+                console.log(res)
+                if (res.data.success) {
+                    console.log(res.data.BaseResponse)
+                    console.log('password changed succesfully!');
+                    console.log(res.data.password);
+                    props.login({
+                        username: username,
+                        password: newPassword
+                    })
+                    setPasswordError(true)
+                    setShowChangePassword(false);
+
+                } else {
+                    setError(res.data.error);
+                    setPasswordError(true)
+                }
+            })
+            .catch(() => {
+                setError('password change failed. Try again.');
+
+            });
+        console.log(error)
+    }
 
     const handleshowChangePassword = e => {
         setShowChangePassword(true);
+
     };
+    const handleVerifyPassword = () => {
+        const newPass = newPassword.localeCompare(verifyNewPassword);
+        if (newPass === 0) {
+            console.log('new password matches!')
+            setNewPasswordError(false);
+        } else {
+            console.log('new password does not match')
+            setNewPasswordError(true);
+        }
+
+    }
 
     const handleClick = e => {
         setAnchorEl(e.currentTarget);
@@ -48,14 +106,23 @@ const User = () => {
     const handleClose = () => {
         setShowMenu(null);
     };
-    const handleEditUsernameClose = () => {
-        setShowEditUsername(false);
-    };
+
 
     const handleshowChangePasswordClose = () => {
         setShowChangePassword(false);
     };
+    const HomeIcon = (props) => {
+        return (
+            <SvgIcon {...props}>
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+            </SvgIcon>
+        );
 
+    }
+    React.useEffect(() => {
+        setUsername(userObj.username)
+        setPassword(userObj.password)
+    }, [username, password])
 
 
     const open = Boolean(anchorEl);
@@ -66,32 +133,27 @@ const User = () => {
             <div className="header-root">
                 <AppBar position="static">
                     <Toolbar>
-                        {/* <SwipeableDrawer
-                            anchor={"left"}
-                            // open={showMenu}
-                            onClose={() => {
-                                setShowMenu(false);
-                            }}
-                        >
-                            <MenuItem onClick={handleClose}> Edit Profile</MenuItem>
-                            <MenuItem onClick={handleClose}> Chat Room</MenuItem>
-                            <MenuItem onClick={handleClose}> Edit Profile</MenuItem>
-                        </SwipeableDrawer> */}
                         <IconButton onClick={() => setShowMenu(!showMenu)}
                             edge="start" className="icon-button" color="inherit" aria-label="menu">
                             <MenuIcon />
 
                         </IconButton>
                         <Typography variant="h6" className="header-title">
-                            User's Profile
+                            {username}'s Profile
                         </Typography>
-                        <Button color="inherit">Logout</Button>
+
+                        <Link to='/home'>
+                            <HomeIcon fontSize="large" />
+                        </Link>
+
+
+
                     </Toolbar>
                 </AppBar>
             </div>
 
             <div className="paper-root">
-                <Paper color="blue" classname="profile-paper" elevation={5} >
+                <Paper color="blue" elevation={5} >
                     <Grid container spacing={2}
                         direction="column"
                         alignItems="center"
@@ -101,6 +163,7 @@ const User = () => {
 
                             <Typography variant="h6" className="header-title">
                                 @{username}
+
                             </Typography>
 
                         </Grid>
@@ -118,13 +181,8 @@ const User = () => {
                                 anchorEl={anchorEl}
                                 keepMounted
                                 open={Boolean(anchorEl)}
-                                onClose={handlePopperClose}
+                                onClose={handlePopperClose}>
 
-                            >
-                                <MenuItem onClick={() => {
-                                    handleClose();
-                                    handleEditUsernameClick();
-                                }}>Edit Username</MenuItem>
                                 <MenuItem onClick={() => {
                                     handleClose();
                                     handleshowChangePassword();
@@ -134,60 +192,51 @@ const User = () => {
 
                         </Grid>
 
-                        <Dialog open={showEditUsername} onClose={handleEditUsernameClose} aria-labelledby="form-dialog-title">
-                            <DialogTitle id="form-dialog-title">Edit Username</DialogTitle>
-                            <DialogContent>
-                                <DialogContentText>
-                                    Enter your Desired username
-                                    </DialogContentText>
-                                <TextField
-                                    autoFocus
-                                    margin="dense"
-                                    id="name"
-                                    label="username"
-                                    type="text"
-                                    fullWidth
-                                />
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={handleEditUsernameClose} color="primary">
-                                    Cancel
-                                </Button>
-                                <Button onClick={handleEditUsernameClose} color="primary">
-                                    Confirm
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
-
                         <Dialog open={showChangePassword} onClose={handleshowChangePasswordClose} aria-labelledby="form-dialog-title">
                             <DialogTitle id="form-dialog-title">Change Password</DialogTitle>
                             <DialogContent>
                                 <DialogContentText>
                                     Please verify your old password before entering new password.
-                                    </DialogContentText>
-                                    <TextField
-                                    // error= " "
+                                </DialogContentText>
+
+                                <DialogContentText>
+                                    <strong> {passwordError ? 'Incorrect password. Try again.' : null}</strong>
+                                </DialogContentText>
+
+                                <DialogContentText>
+
+                                    <strong> {newPasswordError ? 'Passwords does not match. Try Again' : null}</strong>
+
+                                </DialogContentText>
+
+                                <TextField
+                                    onChange={(e) => { setOldPassword(e.target.value) }}
+                                    error={passwordError}
                                     autoFocus
                                     margin="dense"
                                     id="name"
                                     label="Enter old Password"
-                                    type="text"
+                                    type="password"
                                     fullWidth
                                 />
                                 <TextField
+                                    onChange={(e) => { setNewPassword(e.target.value) }}
+                                    error={newPasswordError}
                                     autoFocus
                                     margin="dense"
                                     id="name"
                                     label="new Password"
-                                    type="text"
+                                    type="password"
                                     fullWidth
                                 />
-                                     <TextField
+                                <TextField
+                                    onChange={(e) => { setVerifyNewPassword(e.target.value) }}
+                                    error={newPasswordError}
                                     autoFocus
                                     margin="dense"
                                     id="name"
                                     label="verify new Password"
-                                    type="text"
+                                    type="password"
                                     fullWidth
                                 />
                             </DialogContent>
@@ -195,20 +244,27 @@ const User = () => {
                                 <Button onClick={handleshowChangePasswordClose} color="primary">
                                     Cancel
                                 </Button>
-                                <Button onClick={handleshowChangePasswordClose} color="primary">
+                                <Button onClick={handleChangePassword} color="primary">
                                     Confirm
                                 </Button>
                             </DialogActions>
                         </Dialog>
-                       
+
                     </Grid>
                 </Paper>
             </div>
         </div>
     )
 }
+const mapStateToProps = (state) => {
+    return { userObj: state.userObj }
+}
+function mapDispatchToProps(dispatch) {
+    return {
+        login: (userObj) => dispatch(login(userObj)),
 
-export default User
-
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(User)
 
 
