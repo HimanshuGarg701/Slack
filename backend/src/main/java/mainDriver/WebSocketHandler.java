@@ -37,8 +37,8 @@ public class WebSocketHandler {
 
   @OnWebSocketClose
   public void closed(Session session, int statusCode, String reason) throws IOException {
-    session.getRemote().sendString("Disconnected");
     sessionMap.remove(session);
+    System.out.println("A session disconnected");
   }
 
   @OnWebSocketMessage
