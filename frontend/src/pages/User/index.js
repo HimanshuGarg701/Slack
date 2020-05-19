@@ -23,7 +23,7 @@ import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-const User = ({ userObj }, props) => {
+const User = ({ userObj, isUser }, props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [oldPassword, setOldPassword] = useState("");
@@ -119,9 +119,7 @@ const User = ({ userObj }, props) => {
       className="Home-root"
       style={{ backgroundColor: theme.palette.common.background }}
     >
-      {!props.isUser || props.userObj === null ? (
-        <Redirect to="/login" />
-      ) : null}
+      {!isUser || userObj === null ? <Redirect to="/login" /> : null}
       <div className="header-root">
         <AppBar
           position="static"
