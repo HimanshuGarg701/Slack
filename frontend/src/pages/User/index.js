@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import AppBar from "@material-ui/core/AppBar";
-import MenuIcon from "@material-ui/icons/Menu";
 import Toolbar from "@material-ui/core/Toolbar";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
@@ -22,7 +20,7 @@ import "./styles.css";
 import axios from "axios";
 import { login } from "../../redux/actions";
 import { connect } from "react-redux";
-import { Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 const User = ({ userObj }, props) => {
@@ -37,7 +35,6 @@ const User = ({ userObj }, props) => {
 
   const [error, setError] = useState(null);
 
-  const [showMenu, setShowMenu] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [showChangePassword, setShowChangePassword] = useState(false);
 
@@ -97,10 +94,6 @@ const User = ({ userObj }, props) => {
     setAnchorEl(null);
   };
 
-  const handleClose = () => {
-    setShowMenu(null);
-  };
-
   const handleshowChangePasswordClose = () => {
     setShowChangePassword(false);
   };
@@ -116,7 +109,7 @@ const User = ({ userObj }, props) => {
       setUsername(userObj.username);
       setPassword(userObj.password);
     }
-  }, [username, password]);
+  }, [username, password, userObj]);
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
@@ -198,7 +191,6 @@ const User = ({ userObj }, props) => {
               >
                 <MenuItem
                   onClick={() => {
-                    handleClose();
                     handleshowChangePassword();
                   }}
                 >
