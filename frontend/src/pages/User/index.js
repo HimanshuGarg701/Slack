@@ -120,8 +120,11 @@ const User = ({ userObj }, props) => {
 
     }
     React.useEffect(() => {
-        setUsername(userObj.username)
-        setPassword(userObj.password)
+        if(userObj) {
+            
+            setUsername(userObj.username)
+            setPassword(userObj.password)
+        }
     }, [username, password])
 
 
