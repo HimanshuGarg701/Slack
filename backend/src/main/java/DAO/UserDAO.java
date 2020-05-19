@@ -33,7 +33,7 @@ public class UserDAO {
                     .append("username", "default").append("password", 123456);
             user_collection.insertOne(user);
         }
-        
+
         return userDao;
     }
 
@@ -72,7 +72,7 @@ public class UserDAO {
         if(cursor.hasNext())
             invalidUser = true;
 
-        if(!invalidUser) {
+        if(!invalidUser && !username.equals("default")) {
             try {
                 Document user = new Document("id", id)
                         .append("username", username).append("password", password);

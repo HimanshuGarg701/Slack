@@ -3,12 +3,8 @@ package Processor;
 import DAO.MessageDAO;
 import DTO.*;
 import com.google.gson.Gson;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 
 public class MessageProcessor implements ProcessorBroadcast {
     Gson gson = new Gson();
@@ -37,7 +33,7 @@ public class MessageProcessor implements ProcessorBroadcast {
                 //else process it as a message update for the like.
 
                 //insert new message into the DB and get messageId to be returned in response.
-                String messageId = MessageDAO.insertMessage(messageDto);
+                String messageId = MessageDAO.getInstance().insertMessage(messageDto);
 
                 broadcastDTOhelper.setTypeOfMessage("MESSAGE");
                 broadcastDTOhelper.setPayload(new MessageResPayloadDTO(messageId, messageDto.username, messageDto.body, messageDto.likeCount, messageDto.date, messageDto.likes));
@@ -50,7 +46,7 @@ public class MessageProcessor implements ProcessorBroadcast {
                 broadcastDTOhelper.setPayload(new ErrorDTO("messageId and/or username have not been provided properly!"));
             }else {
                 broadcastDTOhelper.setTypeOfMessage("LIKE");
-                broadcastDTOhelper.setPayload(MessageDAO.updateLikeCount(messageDto.id, messageDto.username, messageDto.likeFlag));
+                broadcastDTOhelper.setPayload(MessageDAO.getInstance().updateLikeCount(messageDto.id, messageDto.username, messageDto.likeFlag));
             }
 
         }
